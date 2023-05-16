@@ -1,0 +1,7 @@
+{
+    "html.format.indentHandlebars": true,
+    "html.format.indentInnerHtml": true,
+    "html.format.templating": true,
+    "html-css-class-completion.enableEmmetSupport": true,
+    "html.suggest.html5": true
+}

@@ -1,0 +1,32 @@
+.top{
+    background-color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 20px black;
+    position: relative;
+}
+.bottom{
+    background-color: white;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 2px 20px black;
+}
+
+.profile{
+    padding: 20px 20px;
+}
+
+.logo{
+    padding: 0px 20px;
+}
+
+.button{
+    padding: 5px 20px;
+    cursor: pointer;
+}
+
+.button:hover{
+    background-color: #EAEAEA;
+    border-radius: 50px;
+}
