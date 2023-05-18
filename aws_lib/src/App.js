@@ -1,21 +1,20 @@
 import './App.css';
-import Navbar from "./components/navbar"
-import BookList from "./components/Booklist"
-import Footer from './components/footer';
+import {BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Dashboard from './components/Dashboard';
+import Login from './components/login'
+
 
 function App() {
   return (
     <div className = "app">
-      <div className = "navbar">
-        <Navbar></Navbar>
-      </div>
-      <div className='page-container'>
-        <BookList></BookList>
-        {/* <Footer></Footer> */}
-      </div>
-      <div className="footer">
-        <Footer></Footer>
-      </div>
+      <Router>
+        <Routes>
+          <Route exact path='/' element={<Login />}/>
+          <Route exact path='/dashboard' element={<Dashboard />}/>
+        </Routes>
+      </Router>
+      {/* <Login></Login> */}
+      {/* <Dashboard /> */}
     </div>
   );
 }

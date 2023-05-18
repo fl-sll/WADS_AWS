@@ -5,13 +5,14 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: center;
 }
 
 .leftFooter{
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin: 50px 50px;
+    margin: 50px 60px;
 }
 
 .midFooter{
@@ -41,6 +42,18 @@
 }
 
 @media (max-width: 840px){
+    .footer{
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+    .rightFooter{
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+}
+@media (max-width: 1049px){
     .footer{
         flex-direction: column;
         text-align: center;

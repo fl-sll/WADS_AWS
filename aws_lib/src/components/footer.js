@@ -5,6 +5,8 @@ import instagram from "../assets/instagram.png"
 import blogger from "../assets/blogger.png"
 import facebook from "../assets/facebook.png"
 import twitter from "../assets/twitter.png"
+// import {faBlogger, faInstagram, faTwitter, faFacebook} from "@fortawesome/free-solid-svg-icons"
+// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 function Footer(){
     return(
@@ -17,6 +19,10 @@ function Footer(){
                  <div className='midFooter'>
                   <h2>Find Us On</h2>
                   <div className='social'>
+                    {/* <FontAwesomeIcon icon={faTwitter}/>
+                    <FontAwesomeIcon icon={faInstagram}/>
+                    <FontAwesomeIcon icon={faFacebook}/>
+                    <FontAwesomeIcon icon={faBlogger}/> */}
                     <img src={twitter} alt="" className='socialLogo'></img>
                     <img src={instagram} alt="" className='socialLogo'></img>
                     <img src={facebook} alt="" className='socialLogo'></img>
