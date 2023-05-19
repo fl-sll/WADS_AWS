@@ -1,0 +1,49 @@
+.container{
+padding: 2%;
+}
+
+.carousel{
+    background-color: black;
+    width: 80vw;
+    max-width: 1000px;
+    /* height: 30vh; */
+    height: 350px;
+    margin: auto;
+}
+
+.searchBar{
+    background-color: lightblue;
+    display: flex;
+    justify-content: space-evenly;
+    border-radius: 45px;
+    height: 50px;
+    max-width: 900px;
+    width: 60vw;
+    margin: 10px auto;
+    /* padding: 5px; */
+}
+
+.searchBar p{
+    padding-left: 15px;
+    /* text-align: center; */
+    vertical-align: top;
+}
+
+#searchInput{
+    border: none;
+    height: 40px;
+    max-width: 600px;
+    width: 35vw;
+    margin: auto;
+    border-radius: 45px;
+    padding: 0px 15px;
+}
+
+.searchBtn{
+    border: none;
+    border-radius: 45px;
+    /* height: 30px; */
+    width: 40px;
+    height: 40px;
+    margin: 5px;
+}

@@ -1,14 +1,20 @@
 import React from 'react'
 import "../styles/Main.css"
-import {Link} from "react-router-dom";
+// import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faNewspaper, faMarker} from '@fortawesome/free-solid-svg-icons'
+import {faNewspaper, faMarker, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 
 function Main(){
     return(
-        <div>
+        <div className='container'>
             <div className='carousel'></div>
-            <div className='searchBar'></div>
+            <div className='searchBar'>
+                <p>Search our collections</p>
+                <input type='text' placeholder='Search' id='searchInput'></input>
+                <button className='searchBtn'>
+                    <FontAwesomeIcon icon={faMagnifyingGlass}></FontAwesomeIcon>
+                </button>
+            </div>
             <div className='buttons'>
                 <div className='newsBlog'>
                     <div id='news'>
@@ -16,7 +22,7 @@ function Main(){
                             <h2>News</h2>
                             <p>Read local and international news</p>
                         </div>
-                        <FontAwesomeIcon icon={faNewspaper}></FontAwesomeIcon>
+                        <FontAwesomeIcon icon={faNewspaper} ></FontAwesomeIcon>
                     </div>
                     <div id='blog'>
                         <div className='textContainer'>
