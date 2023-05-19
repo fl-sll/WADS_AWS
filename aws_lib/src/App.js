@@ -2,6 +2,7 @@ import './App.css';
 import {BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Dashboard from './components/Dashboard';
 import Login from './components/login'
+import Admin from './components/adminLogin';
 
 
 function App() {
@@ -11,6 +12,7 @@ function App() {
         <Routes>
           <Route exact path='/' element={<Login />}/>
           <Route exact path='/dashboard' element={<Dashboard />}/>
+          <Route exact path='/adminLogin' element={<Admin />}/>
         </Routes>
       </Router>
       {/* <Login></Login> */}

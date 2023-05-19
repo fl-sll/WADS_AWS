@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUser, faLock} from '@fortawesome/free-solid-svg-icons'
 
 
-function Login(){
+function Admin(){
     return(
         <div className="login"> 
             <div className="loginContainer">
@@ -20,10 +20,10 @@ function Login(){
                 {/* <Link to="/dashboard">Dashboard</Link> */}
             </div>
             <div>
-                <Link to="/adminLogin">Login As Admin</Link>
+                <Link to="/">Login As Student</Link>
             </div>
         </div>
     )
 }
 
-export default Login;
+export default Admin;
