@@ -1,12 +1,14 @@
 import Footer from './footer'
 import Navbar from './navbar'
-import BookList from "./Booklist"
+import Main from './Main'
+// import BookList from "./Booklist"
 
 function Dashboard(){
     return(
         <div>
             <Navbar></Navbar>
-            <BookList></BookList>
+            {/* <BookList></BookList> */}
+            <Main></Main>
             <Footer></Footer>
         </div>
     )

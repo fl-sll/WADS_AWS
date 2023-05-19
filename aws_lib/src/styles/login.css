@@ -7,12 +7,14 @@
     color: white;
     background-image: url(../assets/backgroundLogin.png);
     background-size: cover;
+    flex-direction: column;
 }
 
 .loginContainer{
-    background-color: blue;
+    background-color: white;
     height: 45%;
     width: 40%;
+    max-width: 500px;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -31,18 +33,44 @@
     font-size: 16px;
     margin-bottom: 10px;
     border: none;
-    border-radius: 10px;
-    width: 200px;
+    border-radius: 45px;
+    width: 250px;
+    background-color: #EFEFEF;
 }
 
 .login_btn{
     padding: 10px;
     font-size: 16px;
     color: white;
-    background: red;
+    background: #8CD3FC;
     border: none;
-    width: 180px;
+    width: 300px;
     margin: 5px 5px;
     margin-bottom: 10px;
-    border-radius: 10px;
+    border-radius: 45px;
+}
+
+.symbol{
+    /* background-color: #EFEFEF; */
+    width: 20px;
+    height: 20px;
+    padding: 1%;
+    margin: 2%;
+    border-radius: 45px;
+}
+
+.formContainer{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.adminBtn{
+    background-color: white;
+    width: 400px;
+    height: 5%;
+    border: none;
+    border-radius: 45px;
+    margin: 1%;
+    font-size: 16px;
 }

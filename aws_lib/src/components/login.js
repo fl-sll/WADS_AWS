@@ -10,18 +10,22 @@ function Login(){
     return(
         <div className="login"> 
             <div className="loginContainer">
-                <FontAwesomeIcon icon={faUser}></FontAwesomeIcon>
                 <img src={logo} alt="" className="logo"></img>
-                <FontAwesomeIcon icon={faLock}></FontAwesomeIcon>
-                <input type="text" className="login_textBox" placeholder="Userman"></input>
-                <input type="password" className="login_textBox" placeholder=""></input>
-                <button className="login_btn">Login</button>
-
-                {/* <Link to="/dashboard">Dashboard</Link> */}
+                <div className="formContainer">
+                    <FontAwesomeIcon icon={faUser} color="black" className="symbol"></FontAwesomeIcon>
+                    <input type="text" className="login_textBox" placeholder="Username or Email"></input>
+                </div>
+                <div className="formContainer">
+                    <FontAwesomeIcon icon={faLock} color="black" className="symbol"></FontAwesomeIcon>
+                    <input type="password" className="login_textBox" placeholder="Password"></input>
+                </div>
+                <button className="login_btn">
+                    <Link to="/bookpage">Login</Link>
+                </button>
             </div>
-            <div>
+            <button className="adminBtn">
                 <Link to="/adminLogin">Login As Admin</Link>
-            </div>
+            </button>
         </div>
     )
 }
