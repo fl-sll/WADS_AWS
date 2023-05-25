@@ -50,6 +50,17 @@
     border-radius: 45px;
 }
 
+.register_btn{
+    padding: 10px;
+    font-size: 16px;
+    background: rgb(219, 219, 219);
+    border: none;
+    width: 300px;
+    margin: 5px 5px;
+    margin-bottom: 10px;
+    border-radius: 45px;
+}
+
 .symbol{
     /* background-color: #EFEFEF; */
     width: 20px;

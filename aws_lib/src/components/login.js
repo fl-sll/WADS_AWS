@@ -19,12 +19,18 @@ function Login(){
                     <FontAwesomeIcon icon={faLock} color="black" className="symbol"></FontAwesomeIcon>
                     <input type="password" className="login_textBox" placeholder="Password"></input>
                 </div>
-                <button className="login_btn">
-                    <Link to="/bookpage">Login</Link>
+                <button className="login`_btn">
+                    <Link to="/bookpage" style={{ textDecoration: 'none' , color:"black"}}>Login</Link>
+                </button>
+                <div style={{color: "black"}}>
+                    Dont have an account?
+                </div>
+                <button className="register_btn">
+                    <Link to="/bookpage" style={{ textDecoration: 'none' , color:"black"}}>Register</Link>
                 </button>
             </div>
             <button className="adminBtn">
-                <Link to="/adminLogin">Login As Admin</Link>
+                <Link to="/adminLogin" style={{ textDecoration: 'none' }}>Login As Admin</Link>
             </button>
         </div>
     )

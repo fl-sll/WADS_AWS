@@ -3,6 +3,8 @@ import React, { useState } from "react";
 import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import {db} from "../firebase"
+import {doc, updateDoc} from "firebase/firestore"
 
 function BookList({ id, title, author, completed }) {
   const [checked, setChecked] = useState(completed);
@@ -10,25 +12,22 @@ function BookList({ id, title, author, completed }) {
   const [availabilityText, setAvailabilityText] = useState(checked ? "Unavailable" : "Available");
   const [iconColor, setIconcolor] = useState(checked ? "#A03131" : "#002B5B");
 
-  const toggleImage = () => {
-    setChecked(!checked);
-    setIcon(!checked ? faCircleXmark : faCircleCheck);
-    setAvailabilityText(!checked ? "Unavailable" : "Available");
-    setIconcolor(!checked ? "#A03131" : "#002B5B");
+  const toggleImage = async () => {
+    const updatedChecked = !checked;
+    setChecked(updatedChecked);
+    setIcon(updatedChecked ? faCircleXmark : faCircleCheck);
+    setAvailabilityText(updatedChecked ? 'Unavailable' : 'Available');
+    setIconcolor(updatedChecked ? '#A03131' : '#002B5B');
+  
+    const bookDocRef = doc(db, 'books', id);
+    try {
+      await updateDoc(bookDocRef, {
+        completed: updatedChecked,
+      });
+    } catch (err) {
+      alert(err);
+    }
   };
-  // const [open, setOpen] = useState({ edit: false, view: false });
-
-  // /* function to update document in firestore */
-  // const handleCheckedChange = async () => {
-  //   const todoDocRef = doc(db, "tasks", id)
-  //   try{
-  //     await updateDoc(todoDocRef, {
-  //       completed: checked
-  //     })
-  //   }catch(err){
-  //     alert(err)
-  //   }
-  // }
 
   return (
     <div className={`bookList ${checked && "bookList--borderColor"}`}>
