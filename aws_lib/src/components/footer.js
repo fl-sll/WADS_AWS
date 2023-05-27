@@ -19,10 +19,6 @@ function Footer(){
                  <div className='midFooter'>
                   <h2>Find Us On</h2>
                   <div className='social'>
-                    {/* <FontAwesomeIcon icon={faTwitter}/>
-                    <FontAwesomeIcon icon={faInstagram}/>
-                    <FontAwesomeIcon icon={faFacebook}/>
-                    <FontAwesomeIcon icon={faBlogger}/> */}
                     <img src={twitter} alt="" className='socialLogo'></img>
                     <img src={instagram} alt="" className='socialLogo'></img>
                     <img src={facebook} alt="" className='socialLogo'></img>

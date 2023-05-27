@@ -18,7 +18,7 @@ function BookList({ id, title, author, completed }) {
     setIcon(updatedChecked ? faCircleXmark : faCircleCheck);
     setAvailabilityText(updatedChecked ? 'Unavailable' : 'Available');
     setIconcolor(updatedChecked ? '#A03131' : '#002B5B');
-  
+
     const bookDocRef = doc(db, 'books', id);
     try {
       await updateDoc(bookDocRef, {
