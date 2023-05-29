@@ -20,12 +20,13 @@ function Admin(){
                     <input type="password" className="login_textBox" placeholder="Password"></input>
                 </div>
                 <button className="login_btn">
-                    <Link to="/bookpage">Login</Link>
+                    <Link style={{textDecoration:"none", color:"white"}} to="/bookpage">Login</Link>
                 </button>
             </div>
-            <button className="adminBtn">
-                <Link to="/">Login As Student</Link>
-            </button>
+            {/* <button className="adminBtn"> */}
+                <Link to="/">
+                    <button className="adminBtn">Login As Student</button></Link>
+            {/* </button> */}
         </div>
     )
 }

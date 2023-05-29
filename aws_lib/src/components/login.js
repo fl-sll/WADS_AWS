@@ -57,9 +57,10 @@ function Login(){
                     Login
                 </button>
             </form>
-            <button className="adminBtn">
-                <Link to="/adminLogin" style={{ textDecoration: 'none' }}>Login As Admin</Link>
-            </button>
+            {/* <button className="adminBtn"> */}
+                <Link to="/adminLogin" className="adminBtnText" style={{ textDecoration: 'none' }}>
+                    <button className="adminBtn">Login As Admin</button></Link>
+            {/* </button> */}
         </div>
     )
 }

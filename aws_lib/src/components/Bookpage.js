@@ -1,11 +1,13 @@
 import Footer from './footer'
 import Navbar from './navbar'
 import BookList from "./Booklist"
+import Under from './under';
 
 function Bookpage(){
     return(
         <div>
             <Navbar></Navbar>
+            <Under></Under>
             <BookList></BookList>
             <Footer></Footer>
         </div>

@@ -7,6 +7,7 @@ import {faCircleUser} from '@fortawesome/free-solid-svg-icons'
 import { useOnHoverOutside } from "./../hooks/Hover";
 import axios from 'axios';
 import Dropdown from "./Dropdown";
+import Under from './under';
 
 function Navbar(){
     const[name, setName] = useState("");
@@ -57,16 +58,15 @@ function Navbar(){
                         </div>
                     </li>
                 </ul>
-                {/* <p>{name}</p> */}
-
             </div>
 
-            <div className='bottom'>
+            {/* <div className='bottom'>
                 <p className='button'>Facilities</p>
                 <p className='button'>Services</p>
                 <p className='button'>Contact Us</p>
                 <p className='button'>About Us</p>
-            </div>
+            </div> */}
+            {/* <Under></Under> */}
         </div>
     )
 }

@@ -4,7 +4,8 @@ import Bookpage from './components/Bookpage';
 import Login from './components/login'
 import Admin from './components/adminLogin';
 import Dashboard from './components/Dashboard';
-
+import AdminPage from './components/adminPage';
+import AddBook from './components/AddBook';
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
           <Route exact path='/bookpage' element={<Bookpage />}/>
           <Route exact path='/adminLogin' element={<Admin />}/>
           <Route exact path='/dashboard' element={<Dashboard />}/>
+          <Route exact path='/adminPage' element={<AdminPage/>}/>
+          <Route exact path='/addBook' element={<AddBook/>}/>
         </Routes>
       </Router>
     </div>

@@ -30,7 +30,7 @@
 
 .button:hover{
     background-color: #EAEAEA;
-    border-radius: 50px;
+    /* border-radius: 50px; */
 }
 
 .profile_bar{
