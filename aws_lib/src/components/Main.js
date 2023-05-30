@@ -4,24 +4,24 @@ import bookBtn from "../assets/BookBtn.png"
 import {Link} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faNewspaper, faMarker, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
-import ImageGallery from 'react-image-gallery'
+// import ImageGallery from 'react-image-gallery'
 
-const images = [
-    {
-        original: "../assets/available.png",
-        thumbnail: "../assets/available.png"
-    },
-    {
-        original: "../assets/backgroundLogin.png",
-        thumbnail: "../assets/backgroundLogin.png"
-    }
-]
+// const images = [
+//     {
+//         original: "../assets/available.png",
+//         thumbnail: "../assets/available.png"
+//     },
+//     {
+//         original: "../assets/backgroundLogin.png",
+//         thumbnail: "../assets/backgroundLogin.png"
+//     }
+// ]
 
-class MyGallery extends React.Component{
-    render(){
-        return <ImageGallery items={images}></ImageGallery>
-    }
-}
+// class MyGallery extends React.Component{
+//     render(){
+//         return <ImageGallery items={images}></ImageGallery>
+//     }
+// }
 
 function Main(){
     return(
