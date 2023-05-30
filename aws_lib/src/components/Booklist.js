@@ -1,12 +1,13 @@
 import "../styles/Booklist.css";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
-import {db} from "../firebase"
-import {doc, updateDoc} from "firebase/firestore"
+import axios from 'axios';
+
 
 function BookList({ id, title, author, completed }) {
+  const [bookData, setBookData] = useState(null);
   const [checked, setChecked] = useState(completed);
   const [icon, setIcon] = useState(checked ? faCircleXmark : faCircleCheck);
   const [availabilityText, setAvailabilityText] = useState(checked ? "Unavailable" : "Available");
@@ -18,16 +19,25 @@ function BookList({ id, title, author, completed }) {
     setIcon(updatedChecked ? faCircleXmark : faCircleCheck);
     setAvailabilityText(updatedChecked ? 'Unavailable' : 'Available');
     setIconcolor(updatedChecked ? '#A03131' : '#002B5B');
-
-    const bookDocRef = doc(db, 'books', id);
-    try {
-      await updateDoc(bookDocRef, {
-        completed: updatedChecked,
-      });
-    } catch (err) {
-      alert(err);
-    }
   };
+
+  useEffect(() => {
+    const token = window.localStorage.getItem("access_token");
+    axios
+      .get("http://localhost:8000/books/${id}", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      .then((response) => {
+        const book = response.data;
+        setBookData(book);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+
+  }, []);
 
   return (
     <div className={`bookList ${checked && "bookList--borderColor"}`}>

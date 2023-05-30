@@ -1,16 +1,19 @@
 from datetime import datetime, timedelta
 from typing import Union
 
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from typing_extensions import Annotated
 from fastapi.middleware.cors import CORSMiddleware
+import base64
+from PIL import Image
+import requests
+import urllib
 
 import mysql.connector
-
 
 conn = mysql.connector.connect(
     host="35.238.148.78",
@@ -44,6 +47,11 @@ class User(BaseModel):
 class UserInDB(User):
     hashed_password: str
 
+class Book(BaseModel):
+    id: int
+    title: str
+    author: str
+    image: str
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -82,6 +90,29 @@ def get_user(username: str):
                 # return UserInDB(**user_dict)
             return db[i]
     return False
+
+def get_books():
+    cursor.execute("SELECT * FROM Books")
+    books = cursor.fetchall()
+    book_details = []
+    for book in books:
+        book_id, title, author, image = book
+        book_details.append({
+            "id": book_id,
+            "title": title,
+            "author": author,
+            "image": image
+        })
+    return book_details
+
+def insert_book_details(book_id: int, title: str, author: str, image_data: str):
+    # base64_image = base64.b64encode(image_data).decode("utf-8")
+
+    cursor.execute(
+        "INSERT INTO Books VALUES (%s, %s, %s, %s)",
+        (book_id, title, author, image_data)
+    )
+    conn.commit()
 
 
 def authenticate_user(username: str, password: str):
@@ -194,3 +225,23 @@ async def read_own_items(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
     return [{"item_id": "Foo", "owner": current_user.username}]
+
+@app.get("/books")
+def get_books_handler():
+    return get_books()
+
+
+@app.post("/addBook")
+async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
+    # response = requests.get(imageLink)
+
+    # with open(imageLink, "wb") as f:
+    #     f.write(response.content)
+    with Image.open("./aws_lib/src/assets/" + file.filename) as f:
+        encode_image = base64.b64encode(f.tobytes())
+        f.write(file.file.read())
+
+    insert_book_details(id, title, author, encode_image)
+    
+    
+    return "submitted"

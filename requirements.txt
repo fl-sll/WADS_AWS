@@ -1,0 +1,6 @@
+fastapi==0.95.2
+jose==1.0.0
+mysql_connector_repackaged==0.3.1
+passlib==1.7.4
+pydantic==1.10.8
+typing_extensions==3.10.0.2
