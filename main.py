@@ -54,6 +54,9 @@ class Book(BaseModel):
     author: str
     image: str
 
+class UpdateBookStatusRequest(BaseModel):
+    status: str
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -113,6 +116,13 @@ def insert_book_details(book_id: int, title: str, author: str, image_data: str, 
     cursor.execute(
         "INSERT INTO Books VALUES (%s, %s, %s, %s, %s)",
         (book_id, title, author, image_data, status)
+    )
+    conn.commit()
+
+def update_book_status(book_id: int, status: str):
+    cursor.execute(
+        "UPDATE Books SET status = %s WHERE bookID = %s",
+        (status, book_id)
     )
     conn.commit()
 
@@ -249,3 +259,12 @@ async def display_image():
     cursor.execute("SElECT * FROM Books;")
     book = cursor.fetchall()
     return book
+
+@app.put("/books/{book_id}")
+async def update_book_status_handler(
+    book_id: int,
+    request_body: UpdateBookStatusRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    update_book_status(book_id, request_body.status)
+    return {"message": "Book status updated successfully"}

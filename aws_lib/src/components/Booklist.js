@@ -8,21 +8,33 @@ import axios from 'axios';
 
 function BookList({ id, title, author, completed }) {
   const [bookData, setBookData] = useState([]);
-  const [checked, setChecked] = useState(completed);
-  const [icon, setIcon] = useState(checked ? faCircleXmark : faCircleCheck);
-  const [availabilityText, setAvailabilityText] = useState(checked ? "Unavailable" : "Available");
-  const [iconColor, setIconcolor] = useState(checked ? "#A03131" : "#002B5B");
 
-  const toggleImage = async () => {
-    const updatedChecked = !checked;
-    setChecked(updatedChecked);
-    setIcon(updatedChecked ? faCircleXmark : faCircleCheck);
-    setAvailabilityText(updatedChecked ? 'Unavailable' : 'Available');
-    setIconcolor(updatedChecked ? '#A03131' : '#002B5B');
-
-    console.log(bookData)
+  const toggleImage = async (bookId, currentStatus) => {
+    const updatedStatus = currentStatus === "available" ? "unavailable" : "available";
+    const token = window.localStorage.getItem("access_token");
+    
+    axios
+      .put(
+        `http://localhost:8000/books/${bookId}`,
+        { status: updatedStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .then((response) => {
+        setBookData((prevBookData) =>
+          prevBookData.map((book) =>
+            book.id === bookId ? { ...book, status: updatedStatus } : book
+          )
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
-
+  
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
@@ -49,7 +61,7 @@ function BookList({ id, title, author, completed }) {
             <div>
               <img src={`data:image/jpeg;base64,${book.image}`} alt={book.title} className="bookimg"/>
             </div>
-            <div>
+            <div class="Contents">
               <h2>{book.title}</h2>
               <p>{book.author}</p>
             </div>
@@ -63,7 +75,7 @@ function BookList({ id, title, author, completed }) {
                 size = "5x"
               />
             </div>
-            <button className="button-17" onClick={() => toggleImage}>
+            <button className="button-17" onClick={() => toggleImage(book.id, book.status)}>
               Borrow
             </button>
           </div>
