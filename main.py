@@ -10,6 +10,7 @@ from typing_extensions import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 import base64
 from PIL import Image
+import io
 import requests
 import urllib
 
@@ -96,21 +97,22 @@ def get_books():
     books = cursor.fetchall()
     book_details = []
     for book in books:
-        book_id, title, author, image = book
+        book_id, title, author, image, status = book
         book_details.append({
             "id": book_id,
             "title": title,
             "author": author,
-            "image": image
+            "image": image,
+            "status": status
         })
     return book_details
 
-def insert_book_details(book_id: int, title: str, author: str, image_data: str):
+def insert_book_details(book_id: int, title: str, author: str, image_data: str, status: str):
     # base64_image = base64.b64encode(image_data).decode("utf-8")
 
     cursor.execute(
         "INSERT INTO Books VALUES (%s, %s, %s, %s, %s)",
-        (book_id, title, author, image_data, "available")
+        (book_id, title, author, image_data, status)
     )
     conn.commit()
 
@@ -230,28 +232,15 @@ async def read_own_items(
 async def get_books_handler():
     return get_books()
 
-
-# @app.post("/addBook")
-# async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
-#     # response = requests.get(imageLink)
-
-#     # with open(imageLink, "wb") as f:
-#     #     f.write(response.content)
-#     with Image.open("./aws_lib/src/assets/" + file.filename) as f:
-#         encode_image = base64.b64encode(f.tobytes())
-#         f.write(file.file.read())
-
-#     insert_book_details(id, title, author, encode_image)
-    
-    
-#     return "submitted"
-
 @app.post("/addBook")
-async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
+async def add_book_to_database(id: int, title: str, author: str, file: UploadFile, status: str):
     with Image.open(file.file) as img:
-        encode_image = base64.b64encode(img.tobytes())
+        image_io = io.BytesIO()
+        img.save(image_io, format='PNG')
+        image_bytes = image_io.getvalue()
+        encoded_image = base64.b64encode(image_bytes)
 
-    insert_book_details(id, title, author, encode_image)
+    insert_book_details(id, title, author, encoded_image, status)
 
     return "submitted"
 

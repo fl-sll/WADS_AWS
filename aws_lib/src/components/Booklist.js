@@ -1,13 +1,13 @@
 import "../styles/Booklist.css";
 import React, { useState, useEffect } from "react";
-import bookImg from "../assets/tomorrow.png"
+// import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 
 
 function BookList({ id, title, author, completed }) {
-  const [bookData, setBookData] = useState("");
+  const [bookData, setBookData] = useState([]);
   const [checked, setChecked] = useState(completed);
   const [icon, setIcon] = useState(checked ? faCircleXmark : faCircleCheck);
   const [availabilityText, setAvailabilityText] = useState(checked ? "Unavailable" : "Available");
@@ -42,33 +42,34 @@ function BookList({ id, title, author, completed }) {
   }, []);
 
   return (
-    <div className={`bookList ${checked && "bookList--borderColor"}`}>
-      <div className="bookList__body">
-
-        <div>
-          <img src = {bookImg} alt= "" className="bookimg"></img>
+    <div>
+      {bookData.map(book => (
+        <div className="bookList" key={book.id}>
+          <div className="bookList__body">
+            <div>
+              <img src={`data:image/jpeg;base64,${book.image}`} alt={book.title} className="bookimg"/>
+            </div>
+            <div>
+              <h2>{book.title}</h2>
+              <p>{book.author}</p>
+            </div>
+          </div>
+          <div className="right">
+            <p>{book.status}</p>
+            <div className="availableimg">
+              <FontAwesomeIcon
+                icon = {book.status === "available" ? faCircleCheck : faCircleXmark}
+                color = {book.status === "available" ? "#002B5B" : "#A03131"}
+                size = "5x"
+              />
+            </div>
+            <button className="button-17" onClick={() => toggleImage}>
+              Borrow
+            </button>
+          </div>
         </div>
-
-        <div>
-          <h2>Pride and Prejudice</h2>
-          <p>Jane Austen</p>
-        </div>
-
-      </div>
-
-      <div class="right">
-
-        <p>{availabilityText}</p>
-        <div class="availableimg">
-          <FontAwesomeIcon icon={icon} color={iconColor} size="5x"/>
-        </div>
-
-        <button class = "button-17" onClick={toggleImage} >
-          Borrow
-        </button>
-
-      </div>
-    </div>
+      ))}
+  </div>
   );
 }
 
