@@ -42,38 +42,24 @@ def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     # base64_image = base64.b64encode(image_data).decode("utf-8")
 
     cursor.execute(
-        "INSERT INTO Books VALUES (%s, %s, %s, %s, %s)",
+        "INSERT INTO Book VALUES (%s, %s, %s, %s, %s)",
         (book_id, title, author, image_data, "available")
     )
     conn.commit()
 
 @app.get("/displayBook")
 def display_book():
-    cursor.execute("SELECT * FROM Books")
+    cursor.execute("SELECT * FROM Book")
     books = cursor.fetchall()
-    # print(books)
-    # print(books[0])
-    # print(books[0][3])
-    image = decode_blob(books[0][3])
-    # decoded_image = Image.open(io.BytesIO(base64.b64decode(blob)))
-    # print(image)
-    # print(type(image))
-    img = Image.frombytes("RGB",(85,85) , image)
-    img.save("test.png")
-    # print(image)
-    return 0
+    print(books[0])
+    print(books[0][3])
+    return books[0][3]
 
 @app.post("/addBook")
-async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
-    # response = requests.get(imageLink)
+async def add_book_to_database(id: int, title: str, author: str, file: str):
 
-    # with open(imageLink, "wb") as f:
-    #     f.write(response.content)
-    with Image.open("./aws_lib/src/assets/" + file.filename) as f:
-        encode_image = base64.b64encode(f.tobytes())
-        f.write(file.file.read())
 
-    insert_book_details(id, title, author, encode_image)
+    insert_book_details(id, title, author, file)
     
     
     return "submitted"
