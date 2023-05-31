@@ -7,7 +7,7 @@ import axios from 'axios';
 
 
 function BookList({ id, title, author, completed }) {
-  const [bookData, setBookData] = useState(null);
+  const [bookData, setBookData] = useState("");
   const [checked, setChecked] = useState(completed);
   const [icon, setIcon] = useState(checked ? faCircleXmark : faCircleCheck);
   const [availabilityText, setAvailabilityText] = useState(checked ? "Unavailable" : "Available");
@@ -19,12 +19,14 @@ function BookList({ id, title, author, completed }) {
     setIcon(updatedChecked ? faCircleXmark : faCircleCheck);
     setAvailabilityText(updatedChecked ? 'Unavailable' : 'Available');
     setIconcolor(updatedChecked ? '#A03131' : '#002B5B');
+
+    console.log(bookData)
   };
 
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get("http://localhost:8000/books/${id}", {
+      .get("http://localhost:8000/books/", {
         headers: {
           Authorization: `Bearer ${token}`
         }

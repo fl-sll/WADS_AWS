@@ -118,7 +118,6 @@ def insert_book_details(book_id: int, title: str, author: str, image_data: str):
 def authenticate_user(username: str, password: str):
     cursor.execute("select * from User")
     user = cursor.fetchall()
-    # print(len(user))
     for i in range(len(user)):
         # print(i)
         # print(username)
@@ -176,6 +175,7 @@ async def get_current_active_user(
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
+
 @app.get("/dummy")
 def check():
     cursor.execute("select * from User")
@@ -227,19 +227,32 @@ async def read_own_items(
     return [{"item_id": "Foo", "owner": current_user.username}]
 
 @app.get("/books")
-def get_books_handler():
+async def get_books_handler():
     return get_books()
 
 
+# @app.post("/addBook")
+# async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
+#     # response = requests.get(imageLink)
+
+#     # with open(imageLink, "wb") as f:
+#     #     f.write(response.content)
+#     with Image.open("./aws_lib/src/assets/" + file.filename) as f:
+#         encode_image = base64.b64encode(f.tobytes())
+#         f.write(file.file.read())
+
+#     insert_book_details(id, title, author, encode_image)
+    
+    
+#     return "submitted"
+
 @app.post("/addBook")
 async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
-    with Image.open("./aws_lib/src/assets/" + file.filename) as f:
-        encode_image = base64.b64encode(f.tobytes())
-        # f.write(file.file.read())
+    with Image.open(file.file) as img:
+        encode_image = base64.b64encode(img.tobytes())
 
     insert_book_details(id, title, author, encode_image)
-    
-    
+
     return "submitted"
 
 @app.get("/display")
