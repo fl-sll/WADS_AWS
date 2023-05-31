@@ -109,8 +109,8 @@ def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     # base64_image = base64.b64encode(image_data).decode("utf-8")
 
     cursor.execute(
-        "INSERT INTO Books VALUES (%s, %s, %s, %s)",
-        (book_id, title, author, image_data)
+        "INSERT INTO Books VALUES (%s, %s, %s, %s, %s)",
+        (book_id, title, author, image_data, "available")
     )
     conn.commit()
 
@@ -233,15 +233,17 @@ def get_books_handler():
 
 @app.post("/addBook")
 async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
-    # response = requests.get(imageLink)
-
-    # with open(imageLink, "wb") as f:
-    #     f.write(response.content)
     with Image.open("./aws_lib/src/assets/" + file.filename) as f:
         encode_image = base64.b64encode(f.tobytes())
-        f.write(file.file.read())
+        # f.write(file.file.read())
 
     insert_book_details(id, title, author, encode_image)
     
     
     return "submitted"
+
+@app.get("/display")
+async def display_image():
+    cursor.execute("SElECT * FROM Books;")
+    book = cursor.fetchall()
+    return book
