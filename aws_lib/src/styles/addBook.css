@@ -1,9 +1,10 @@
-.container{
+.addContainer{
     background-color: #E6E6E6;
     border-radius: 45px;
     max-width: 800px;
     margin: auto;
     margin-top: 40px;
+    padding: 30px;
 }
 
 h1{
@@ -41,4 +42,11 @@ h1{
 
 .btn:hover{
     cursor: pointer;
+}
+
+.warning
+{
+    color: red;
+    display: flex;
+    justify-content: center;
 }

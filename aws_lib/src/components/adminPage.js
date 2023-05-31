@@ -10,8 +10,10 @@ function AdminPage(){
         <div>
             <Navbar></Navbar>
             <p>Welcome {name}</p>
-            <Link to="/addBook"><button>Add Book</button></Link>
-            <button>check user book</button>
+            <div>
+                <Link to="/addBook"><button className="adminPageBtn">Add Book</button></Link>
+                <button className="adminPageBtn">check user book</button>
+            </div>
             <Footer></Footer>
         </div>
     )

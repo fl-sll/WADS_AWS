@@ -10,9 +10,11 @@ function AddBook(){
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
     const [file, setFile] = useState("");
+    const [valid, setValid] = useState(0);
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
+        console.log("here")
         e.preventDefault();
 
         const data ={
@@ -34,6 +36,7 @@ function AddBook(){
                 // window.localStorage.setItem("access_token", response.data.access_token)
                 // console.log(response.data.access_token)
                 // navigate("/dashboard")
+                setValid(1)
                 console.log(response)
             })
             .catch(function(error) {
@@ -44,8 +47,13 @@ function AddBook(){
     return(
         <div>
             <Navbar></Navbar>
-            <div className="container">
+            <div className="addContainer">
                 <h1>Add Book</h1>
+                { valid ? (
+                    <p className="warning">Book is added to database</p>
+                ):(
+                    <p className="warning">Error, book is not added to database :(</p>
+                )}
                 <form onSubmit={handleSubmit}>
                     <div className="inputContainer">
                         <h4>Book ID: </h4>
