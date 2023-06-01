@@ -110,12 +110,12 @@ def get_books():
         })
     return book_details
 
-def insert_book_details(book_id: int, title: str, author: str, image_data: str, status: str):
+def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     # base64_image = base64.b64encode(image_data).decode("utf-8")
 
     cursor.execute(
         "INSERT INTO Books VALUES (%s, %s, %s, %s, %s)",
-        (book_id, title, author, image_data, status)
+        (book_id, title, author, image_data, "available")
     )
     conn.commit()
 
@@ -243,14 +243,15 @@ async def get_books_handler():
     return get_books()
 
 @app.post("/addBook")
-async def add_book_to_database(id: int, title: str, author: str, file: UploadFile, status: str):
+async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
+    print(file)
     with Image.open(file.file) as img:
         image_io = io.BytesIO()
         img.save(image_io, format='PNG')
         image_bytes = image_io.getvalue()
         encoded_image = base64.b64encode(image_bytes)
 
-    insert_book_details(id, title, author, encoded_image, status)
+    insert_book_details(id, title, author, encoded_image)
 
     return "submitted"
 
