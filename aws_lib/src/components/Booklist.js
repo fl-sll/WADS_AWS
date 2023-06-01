@@ -12,7 +12,7 @@ function BookList({ id, title, author, completed }) {
   const toggleImage = async (bookId, currentStatus) => {
     const updatedStatus = currentStatus === "available" ? "unavailable" : "available";
     const token = window.localStorage.getItem("access_token");
-    
+
     axios
       .put(
         `http://localhost:8000/books/${bookId}`,
@@ -23,7 +23,7 @@ function BookList({ id, title, author, completed }) {
           },
         }
       )
-      .then((response) => {
+      .then(() => {
         setBookData((prevBookData) =>
           prevBookData.map((book) =>
             book.id === bookId ? { ...book, status: updatedStatus } : book
@@ -34,7 +34,7 @@ function BookList({ id, title, author, completed }) {
         console.log(error);
       });
   };
-  
+
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios

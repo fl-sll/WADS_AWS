@@ -243,17 +243,24 @@ async def get_books_handler():
     return get_books()
 
 @app.post("/addBook")
-async def add_book_to_database(id: int, title: str, author: str, file: UploadFile):
+async def add_book_to_database(
+    id: int,
+    title: str,
+    author: str,
+    file: UploadFile = File(...)
+):
     print(file)
+
     with Image.open(file.file) as img:
         image_io = io.BytesIO()
         img.save(image_io, format='PNG')
         image_bytes = image_io.getvalue()
-        encoded_image = base64.b64encode(image_bytes)
+        encoded_image = base64.b64encode(image_bytes).decode("utf-8")
 
     insert_book_details(id, title, author, encoded_image)
 
-    return "submitted"
+    return {"message": "Book added successfully"}
+
 
 @app.get("/display")
 async def display_image():

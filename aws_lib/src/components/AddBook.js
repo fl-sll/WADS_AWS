@@ -5,17 +5,21 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { faHandsHelping } from "@fortawesome/free-solid-svg-icons";
 
-function AddBook(){    
-    const [id, setId] = useState("");
+function AddBook(){
+    const [id, setId] = useState(0);
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
-    const [file, setFile] = useState("");
+    const [file, setFile] = useState(null);
     const [valid, setValid] = useState(0);
     const navigate = useNavigate();
 
     const handleSubmit = (e) => {
         console.log("here")
         e.preventDefault();
+        // console.log("before", file)
+        // setFile(e.target.files)
+        setFile(e.target.files);
+
 
         const data ={
             id: id,
@@ -23,7 +27,14 @@ function AddBook(){
             author : author,
             file : file
         }
+        console.log(data)
         console.log(file)
+
+        if(!file){
+            return;
+        }
+
+
         axios
             .post("http://127.0.0.1:8000/addBook", data,  {
                 headers:{
@@ -31,18 +42,20 @@ function AddBook(){
                     "Content-Type": "multipart/form-data"
                 }
             })
-    
+
             .then((response) => {
                 // window.localStorage.setItem("access_token", response.data.access_token)
                 // console.log(response.data.access_token)
                 // navigate("/dashboard")
                 setValid(1)
+                console.log("there")
                 console.log(response)
             })
             .catch(function(error) {
               console.log(error);
             })
-    }
+        }
+
 
     return(
         <div>
@@ -69,7 +82,7 @@ function AddBook(){
                     </div>
                     <div className="inputContainer">
                         <h4>Image File: </h4>
-                        <input value={file} type="file" onChange={(e) => setFile(e.target.value)}/>
+                        <input type="file" onChange={(e) => setFile(e.target.files[0])} />
                     </div>
                     <div>
                         <button className="btn" type="submit" value="Upload">+ Add</button>
@@ -78,6 +91,29 @@ function AddBook(){
             </div>
         </div>
     )
-}
+};
+    // const [file, setFile] = useState(null);
+
+    // const handleUpload = (event) => {
+    //     setFile(event.target.files[0]);
+    // };
+
+    // return (
+    //     <div>
+    //     <AddBook
+    //         id="upload-file"
+    //         label="Upload File"
+    //         accept="image/*"
+    //         onUpload={handleUpload}
+    //     />
+    //     {file && (
+    //         <div>
+    //         File name: {file.name}
+    //         File size: {file.size}
+    //         </div>
+    //     )}
+    //     </div>
+    // );
+
 
 export default AddBook;
