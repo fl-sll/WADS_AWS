@@ -2,8 +2,6 @@ import React ,{useState}  from "react";
 import Navbar from "./navbar";
 import "../styles/addBook.css"
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import { faHandsHelping } from "@fortawesome/free-solid-svg-icons";
 
 function AddBook(){
     const [id, setId] = useState(0);
@@ -11,15 +9,12 @@ function AddBook(){
     const [author, setAuthor] = useState("");
     const [file, setFile] = useState(null);
     const [valid, setValid] = useState(0);
-    const navigate = useNavigate();
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         console.log("here")
         e.preventDefault();
-        // console.log("before", file)
-        // setFile(e.target.files)
         setFile(e.target.files);
-
+        console.log(file)
 
         const data ={
             id: id,
@@ -27,13 +22,6 @@ function AddBook(){
             author : author,
             file : file
         }
-        console.log(data)
-        console.log(file)
-
-        if(!file){
-            return;
-        }
-
 
         axios
             .post("http://127.0.0.1:8000/addBook", data,  {
