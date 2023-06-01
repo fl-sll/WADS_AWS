@@ -7,12 +7,12 @@ padding: 2%;
 }
 
 .carousel{
-    background-color: black;
+    /* background-color: black; */
     width: 80vw;
     max-width: 1000px;
     /* height: 30vh; */
     height: 350px;
-    margin: auto;
+    margin: 0 auto;
 }
 
 .searchBar{
