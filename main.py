@@ -110,6 +110,21 @@ def get_books():
         })
     return book_details
 
+def get_books_from_user():
+    cursor.execute("SELECT * FROM Books")
+    books = cursor.fetchall()
+    book_details = []
+    for book in books:
+        book_id, title, author, image, status = book
+        book_details.append({
+            "id": book_id,
+            "title": title,
+            "author": author,
+            "image": image,
+            "status": status
+        })
+    return book_details
+
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     # base64_image = base64.b64encode(image_data).decode("utf-8")
 
@@ -306,3 +321,10 @@ async def add_borrow_book(
                 return "added"
     
     return "not added"
+
+@app.get("/bookList/me/")
+async def book_list(
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    
+    return current_user

@@ -8,6 +8,7 @@ import AdminPage from './components/adminPage';
 import AddBook from './components/AddBook';
 import Image from './components/Display';
 import CheckOrder from './components/CheckOrder';
+import Profile from './components/Profile';
 
 
 function App() {
@@ -23,6 +24,8 @@ function App() {
           <Route exact path='/addBook' element={<AddBook/>}/>
           <Route exact path='/image' element={<Image/>}/>
           <Route exact path='/checkOrder' element={<CheckOrder/>}/>
+          <Route exact path='/profile' element={<Profile/>}/>
+          
         </Routes>
       </Router>
     </div>

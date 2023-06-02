@@ -26,6 +26,7 @@
 .button{
     padding: 5px 20px;
     cursor: pointer;
+    color: black;
 }
 
 .button:hover{
