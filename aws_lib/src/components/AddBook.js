@@ -47,7 +47,7 @@ function AddBook(){
 
     return(
         <div>
-            <Navbar></Navbar>
+            <Navbar page="/adminPage"></Navbar>
             <div className="addContainer">
                 <h1>Add Book</h1>
                 { valid ? (

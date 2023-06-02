@@ -7,7 +7,7 @@ import Under from './under';
 function Dashboard(){
     return(
         <div>
-            <Navbar></Navbar>
+            <Navbar page="/dashboard"></Navbar>
             <Under></Under>
             {/* <BookList></BookList> */}
             <Main></Main>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+// https://www.youtube.com/watch?v=SK9AlIbexOE
 const slideStyles = {
   width: "100%",
   height: "100%",

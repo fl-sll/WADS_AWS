@@ -6,7 +6,7 @@ import Under from './under';
 function Bookpage(){
     return(
         <div>
-            <Navbar></Navbar>
+            <Navbar page="/dashboard"></Navbar>
             <Under></Under>
             <BookList></BookList>
             <Footer></Footer>

@@ -9,7 +9,7 @@ import axios from 'axios';
 import Dropdown from "./Dropdown";
 import Under from './under';
 
-function Navbar(){
+function Navbar({page}){
     const[name, setName] = useState("");
     const navigate = useNavigate();
     const dropdownRef = useRef(null); // Create a reference for dropdown container
@@ -41,7 +41,7 @@ function Navbar(){
     return(
         <div>
             <div className='top'>
-                <Link to="/dashboard">
+                <Link to={page}>
                     <img src={logo} alt="" className='logo'></img>
                 </Link>
                 <ul>
