@@ -96,7 +96,7 @@ def get_user(username: str):
     return False
 
 def get_books():
-    cursor.execute("SELECT * FROM Books")
+    cursor.execute("SELECT * FROM Book")
     books = cursor.fetchall()
     book_details = []
     for book in books:
@@ -110,17 +110,20 @@ def get_books():
         })
     return book_details
 
-def get_books_from_user():
-    cursor.execute("SELECT * FROM Books")
+def get_books_from_user(user: str):
+    cursor.execute("SELECT bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM Borrow bo JOIN Book b ON bo.bookID = b.bookID where uid = %s", (user,))
     books = cursor.fetchall()
     book_details = []
     for book in books:
-        book_id, title, author, image, status = book
+        # book_id, title, author, image, status = book
+        uid, bookID, title, image, date, due, status = book
         book_details.append({
-            "id": book_id,
-            "title": title,
-            "author": author,
+            "uid" : uid,
+            "bookID" : bookID,
+            "title":title,
             "image": image,
+            "borrow_date": date,
+            "due_date" : due,
             "status": status
         })
     return book_details
@@ -129,14 +132,14 @@ def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     # base64_image = base64.b64encode(image_data).decode("utf-8")
 
     cursor.execute(
-        "INSERT INTO Books VALUES (%s, %s, %s, %s, %s)",
+        "INSERT INTO Book VALUES (%s, %s, %s, %s, %s)",
         (book_id, title, author, image_data, "available")
     )
     conn.commit()
 
 def update_book_status(book_id: int, status: str):
     cursor.execute(
-        "UPDATE Books SET status = %s WHERE bookID = %s",
+        "UPDATE Book SET status = %s WHERE bookID = %s",
         (status, book_id)
     )
     conn.commit()
@@ -257,24 +260,45 @@ async def read_own_items(
 async def get_books_handler():
     return get_books()
 
+# @app.post("/addBook")
+# async def add_book_to_database(
+#     id: int,
+#     title: str,
+#     author: str,
+#     file: UploadFile = File(...)
+# ):
+#     print(file)
+
+#     with Image.open(file.file) as img:
+#         image_io = io.BytesIO()
+#         img.save(image_io, format='PNG')
+#         image_bytes = image_io.getvalue()
+#         encoded_image = base64.b64encode(image_bytes).decode("utf-8")
+
+#     insert_book_details(id, title, author, encoded_image)
+
+#     return {"message": "Book added successfully"}
+
+def insert_book_details(book_id: int, title: str, author: str, image_data: str):
+
+    cursor.execute(
+        "INSERT INTO Book VALUES (%s, %s, %s, %s, %s)",
+        (book_id, title, author, image_data, "available")
+    )
+    conn.commit()
+
+@app.get("/displayBook")
+def display_book():
+    cursor.execute("SELECT * FROM Book")
+    books = cursor.fetchall()
+    # print(books[0])
+    # print(books[0][3])
+    return books[0][3]
+
 @app.post("/addBook")
-async def add_book_to_database(
-    id: int,
-    title: str,
-    author: str,
-    file: UploadFile = File(...)
-):
-    print(file)
-
-    with Image.open(file.file) as img:
-        image_io = io.BytesIO()
-        img.save(image_io, format='PNG')
-        image_bytes = image_io.getvalue()
-        encoded_image = base64.b64encode(image_bytes).decode("utf-8")
-
-    insert_book_details(id, title, author, encoded_image)
-
-    return {"message": "Book added successfully"}
+async def add_book_to_database(id: int, title: str, author: str, file: str):
+    insert_book_details(id, title, author, file)
+    return "submitted"
 
 
 @app.get("/display")
@@ -303,7 +327,7 @@ async def add_borrow_book(
     print(due)
     print(date.today())
 
-    cursor.execute("SELECT * FROM Books")
+    cursor.execute("SELECT * FROM Book")
     bookList = cursor.fetchall()
 
     for i in range(len(bookList)):
@@ -314,7 +338,7 @@ async def add_borrow_book(
                 cursor.execute(query, data)
                 conn.commit()
 
-                updateQuery = "UPDATE Books SET status = %s WHERE bookID = %s"
+                updateQuery = "UPDATE Book SET status = %s WHERE bookID = %s"
                 change = ("unavailable", bookID)
                 cursor.execute(updateQuery, change)
                 conn.commit()
@@ -326,5 +350,5 @@ async def add_borrow_book(
 async def book_list(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
-    
-    return current_user
+    user = current_user[2]
+    return get_books_from_user(user)

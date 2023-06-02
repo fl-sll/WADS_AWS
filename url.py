@@ -57,9 +57,5 @@ def display_book():
 
 @app.post("/addBook")
 async def add_book_to_database(id: int, title: str, author: str, file: str):
-
-
     insert_book_details(id, title, author, file)
-    
-    
     return "submitted"

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
+import Image from "./Display";
 
 
 function UserBook({ id, title, author, completed }) {
@@ -14,8 +15,8 @@ function UserBook({ id, title, author, completed }) {
     const token = window.localStorage.getItem("access_token");
 
     axios
-      .put(
-        `http://localhost:8000/books/${bookId}`,
+      .get(
+        `http://localhost:8000/bookList/me`,
         { status: updatedStatus },
         {
           headers: {
@@ -38,7 +39,7 @@ function UserBook({ id, title, author, completed }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get("http://localhost:8000/books/", {
+      .get("http://localhost:8000/bookList/me", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -56,14 +57,15 @@ function UserBook({ id, title, author, completed }) {
   return (
     <div>
       {bookData.map(book => (
-        <div className="bookList" key={book.id}>
+        <div className="bookList" key={book.bookID}>
           <div className="bookList__body">
             <div>
-              <img src={`data:image/jpeg;base64,${book.image}`} alt={book.title} className="bookimg"/>
+              <img src={book.image} alt={book.title} className="bookimg"/>
             </div>
             <div class="Contents">
               <h2>{book.title}</h2>
-              <p>{book.author}</p>
+              <p>{book.borrow_date}</p>
+              <p>{book.due_date}</p>
             </div>
           </div>
           <div className="right">
@@ -75,8 +77,8 @@ function UserBook({ id, title, author, completed }) {
                 size = "5x"
               />
             </div>
-            <button className="button-17" onClick={() => toggleImage(book.id, book.status)}>
-              Borrow
+            <button className="button-17" onClick={() => toggleImage(book.bookID, book.status)}>
+              Cancel
             </button>
           </div>
         </div>
