@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
-import Image from "./Display";
 
 
 function UserBook({ id, title, author, completed }) {
