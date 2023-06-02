@@ -8,6 +8,7 @@ import axios from 'axios';
 
 function BookList({ id, title, author, completed }) {
   const [bookData, setBookData] = useState([]);
+  const [refreshData, setRefreshData] = useState(false);
 
   const toggleImage = async (bookId, currentStatus) => {
     const updatedStatus = currentStatus === "available" ? "unavailable" : "available";
@@ -32,6 +33,9 @@ function BookList({ id, title, author, completed }) {
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setRefreshData(prevValue => !prevValue);
       });
   };
 
@@ -49,9 +53,9 @@ function BookList({ id, title, author, completed }) {
       })
       .catch((error) => {
         console.log(error);
-      });
+      })
 
-  }, []);
+  }, [refreshData]);
 
   return (
     <div>
@@ -59,7 +63,7 @@ function BookList({ id, title, author, completed }) {
         <div className="bookList" key={book.id}>
           <div className="bookList__body">
             <div>
-              <img src={`data:image/jpeg;base64,${book.image}`} alt={book.title} className="bookimg"/>
+              <img src={`${book.image}`} alt={book.title} className="bookimg"/>
             </div>
             <div class="Contents">
               <h2>{book.title}</h2>

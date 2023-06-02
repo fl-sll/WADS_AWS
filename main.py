@@ -96,7 +96,7 @@ def get_user(username: str):
     return False
 
 def get_books():
-    cursor.execute("SELECT * FROM Book")
+    cursor.execute("SELECT * FROM Book WHERE status = 'available'")
     books = cursor.fetchall()
     book_details = []
     for book in books:
@@ -141,6 +141,15 @@ def update_book_status(book_id: int, status: str):
     cursor.execute(
         "UPDATE Book SET status = %s WHERE bookID = %s",
         (status, book_id)
+    )
+    conn.commit()
+
+def add_borrow_list(book_id: int, uid: str):
+    today = date.today()
+    due = date.today() + timedelta(days=3)
+    cursor.execute(
+        "INSERT INTO Borrow VALUES (%s, %s, %s, %s, %s)",
+        (uid, book_id, today, due, "ordered")
     )
     conn.commit()
 
@@ -260,27 +269,7 @@ async def read_own_items(
 async def get_books_handler():
     return get_books()
 
-# @app.post("/addBook")
-# async def add_book_to_database(
-#     id: int,
-#     title: str,
-#     author: str,
-#     file: UploadFile = File(...)
-# ):
-#     print(file)
-
-#     with Image.open(file.file) as img:
-#         image_io = io.BytesIO()
-#         img.save(image_io, format='PNG')
-#         image_bytes = image_io.getvalue()
-#         encoded_image = base64.b64encode(image_bytes).decode("utf-8")
-
-#     insert_book_details(id, title, author, encoded_image)
-
-#     return {"message": "Book added successfully"}
-
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
-
     cursor.execute(
         "INSERT INTO Book VALUES (%s, %s, %s, %s, %s)",
         (book_id, title, author, image_data, "available")
@@ -313,6 +302,8 @@ async def update_book_status_handler(
     request_body: UpdateBookStatusRequest,
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
+    user = current_user[2]
+    add_borrow_list(book_id, user)
     update_book_status(book_id, request_body.status)
     return {"message": "Book status updated successfully"}
 
@@ -343,7 +334,7 @@ async def add_borrow_book(
                 cursor.execute(updateQuery, change)
                 conn.commit()
                 return "added"
-    
+
     return "not added"
 
 @app.get("/bookList/me/")
@@ -352,3 +343,13 @@ async def book_list(
 ):
     user = current_user[2]
     return get_books_from_user(user)
+
+@app.get("/searchUser")
+async def search_user(username: str):
+    query = ("SELECT email FROM User WHERE username = %s")
+    cursor.execute(query, (username, ))
+    data = cursor.fetchall()
+
+    
+    
+    return data

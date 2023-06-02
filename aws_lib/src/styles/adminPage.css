@@ -34,3 +34,31 @@
     justify-content: space-around;
     margin-bottom: 20px;
 }
+
+.adminSearchBar{
+    display: flex;
+    justify-content: space-between;
+    border-radius: 45px;
+    height: 50px;
+    max-width: 720px;
+    width: 60vw;
+    margin: 10px auto;
+    background-color: #F8B21A;
+    margin-top: 40px;
+}
+
+#adminSearchInput{
+    border: none;
+    height: 40px;
+    max-width: 600px;
+    width: 35vw;
+    margin: auto;
+    border-radius: 45px;
+    padding: 0px 15px;
+    /* background-color: #E6E6E6; */
+    font-size: 20px;
+}
+
+.searchBtn:hover{
+    cursor: pointer;
+}

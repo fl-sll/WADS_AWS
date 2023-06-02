@@ -4,20 +4,20 @@ import { Link } from "react-router-dom";
 import "../styles/adminPage.css"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
+import UserBook from "./UserBook";
 
 function CheckOrder(){
     return(
         <div>
             <Navbar page="/adminPage"></Navbar>
-            <div className='searchBar'>
-                <p>Search student</p>
-                <input type='text' placeholder='Search' id='searchInput'></input>
-                <button className='searchBtn'>
+            <form className='adminSearchBar'>
+                <input type='text' placeholder='Search username' id='adminSearchInput'></input>
+                <button type="submit" className='searchBtn'>
                     <FontAwesomeIcon icon={faMagnifyingGlass}></FontAwesomeIcon>
                 </button>
-            </div>
+            </form>
             <div>
-                
+                <UserBook></UserBook>
             </div>
         </div>
     )

@@ -1,6 +1,5 @@
 import Footer from './footer'
 import Navbar from './navbar'
-// import BookList from "./Booklist"
 import Under from './under';
 import UserBook from './UserBook';
 
