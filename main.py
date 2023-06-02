@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import date, timedelta, datetime
 from typing import Union
 
 from fastapi import Depends, FastAPI, HTTPException, status, UploadFile, File
@@ -276,3 +276,33 @@ async def update_book_status_handler(
 ):
     update_book_status(book_id, request_body.status)
     return {"message": "Book status updated successfully"}
+
+@app.post("/borrowBook")
+async def add_borrow_book(
+    uid: str,
+    bookID: int
+):
+    today = date.today()
+    due = date.today() + timedelta(days=3)
+    print(today)
+    print(due)
+    print(date.today())
+
+    cursor.execute("SELECT * FROM Books")
+    bookList = cursor.fetchall()
+
+    for i in range(len(bookList)):
+        if bookList[i][0] == bookID:
+            if bookList[i][4] == "available":
+                query = "INSERT INTO Borrow VALUES (%s, %s, %s, %s, %s)"
+                data = (uid, bookID, today, due, "ordered")
+                cursor.execute(query, data)
+                conn.commit()
+
+                updateQuery = "UPDATE Books SET status = %s WHERE bookID = %s"
+                change = ("unavailable", bookID)
+                cursor.execute(updateQuery, change)
+                conn.commit()
+                return "added"
+    
+    return "not added"
