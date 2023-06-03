@@ -132,13 +132,14 @@ def get_books_from_user(user: str):
 
 # get books from user, based on that one user
 def get_borrowed_books():
-    cursor.execute("SELECT bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM Borrow bo JOIN Book b ON bo.bookID = b.bookID")
+    cursor.execute("SELECT u.fullname, bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM User u JOIN Borrow bo ON bo.uid = u.email JOIN Book b ON bo.bookID = b.bookID WHERE bo.status = 'ordered';")
     books = cursor.fetchall()
     book_details = []
     for book in books:
         # book_id, title, author, image, status = book
-        uid, bookID, title, image, date, due, status = book
+        fullname, uid, bookID, title, image, date, due, status = book
         book_details.append({
+            "fullname" : fullname,
             "uid" : uid,
             "bookID" : bookID,
             "title":title,
@@ -165,9 +166,24 @@ def update_book_status(book_id: int, status: str):
     )
     conn.commit()
 
+def cancel_order_status(book_id: int):
+    cursor.execute(
+        "DELETE FROM Borrow WHERE bookID = %s",
+        (book_id,)
+    )
+    cursor.execute(
+        "UPDATE Book SET status = 'available' WHERE bookID = %s",
+        (book_id,)
+    )
+    conn.commit()
+
 def update_order_status(book_id: int, status: str):
     cursor.execute(
-        "UPDATE Book SET status = %s WHERE bookID = %s",
+        "UPDATE Book SET status = 'unavailable' WHERE bookID = %s",
+        (book_id,)
+    )
+    cursor.execute(
+        "UPDATE Borrow SET status = %s WHERE bookID = %s",
         (status, book_id)
     )
     conn.commit()
@@ -352,8 +368,14 @@ async def update_book_status_handler(
     request_body: UpdateBookStatusRequest,
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
-    user = current_user[2]
-    update_book_status(book_id, request_body.status)
+    if request_body.status == "ordered":
+        cancel_order_status(book_id)
+        # print(book_id, request_body.status)
+    elif request_body.status == "collected":
+        update_order_status(book_id, request_body.status)
+        # print(book_id, request_body.status)
+    else:
+        return {"error": "Book status mismatch"}
     return {"message": "Book status updated successfully"}
 
 # @app.post("/borrowBook")

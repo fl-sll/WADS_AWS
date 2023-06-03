@@ -2,17 +2,18 @@ import "../styles/UserBook.css";
 import React, { useState, useEffect } from "react";
 // import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faBoxCircleCheck} from '@fortawesome/pro-solid-svg-icons'
+import {faCircleCheck} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 import Availabilitydropdown from "./adminDrop"
 
 
 function Adminbook({ user, id, title, author, completed }) {
   const [bookData, setBookData] = useState([]);
+  const [refreshData, setRefreshData] = useState(false);
 
   const toggleImage = async (bookId, currentStatus) => {
     const token = window.localStorage.getItem("access_token");
-    console.log(bookId);
+    // console.log(bookId);
 
     axios
       .put(
@@ -27,13 +28,16 @@ function Adminbook({ user, id, title, author, completed }) {
       .then(() => {
         setBookData((prevBookData) =>
         prevBookData.map((book) =>
-          book.id === bookId ? { ...book, status: currentStatus } : book
+          book.bookId === bookId ? { ...book, status: currentStatus } : book
         )
       );
       })
       .catch((error) => {
         console.log(error);
       })
+      .finally(() => {
+        setRefreshData(prevValue => !prevValue);
+      });
   };
 
   useEffect(() => {
@@ -53,7 +57,7 @@ function Adminbook({ user, id, title, author, completed }) {
         console.log(error);
       });
 
-  }, []);
+  }, [refreshData]);
 
   return (
     <div>
@@ -67,13 +71,16 @@ function Adminbook({ user, id, title, author, completed }) {
               <h2>{book.title}</h2>
               <p>Borrowed: {book.borrow_date}</p>
               <p>Due Date: {book.due_date}</p>
+              <p className="name" title={book.uid}>
+                Customer: {book.fullname}
+              </p>
             </div>
           </div>
           <div className="right">
             <p>{book.status}</p>
             <div className="availableimg">
               <FontAwesomeIcon
-                icon = {faBoxCircleCheck}
+                icon = {faCircleCheck}
                 color = {"#628B48"}
                 size = "5x"
               />
