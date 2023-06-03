@@ -2,7 +2,7 @@ import "../styles/UserBook.css";
 import React, { useState, useEffect } from "react";
 // import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faCircleCheck} from '@fortawesome/free-solid-svg-icons'
+import {faClipboardCheck, faBoxCircleCheck} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 import Availabilitydropdown from "./adminDrop"
 
@@ -80,7 +80,7 @@ function Adminbook({ user, id, title, author, completed }) {
             <p>{book.status}</p>
             <div className="availableimg">
               <FontAwesomeIcon
-                icon = {faCircleCheck}
+                icon = {faBoxCircleCheck}
                 color = {"#628B48"}
                 size = "5x"
               />

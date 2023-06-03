@@ -7,7 +7,8 @@ import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import Adminbook from "./AdminUserPage";
 
 function CheckOrder(){
-    const [user, setUser] = useState("");
+    // const [user, setUser] = useState("");
+    const user="johndoe"
 
     return(
         <div>
@@ -19,7 +20,7 @@ function CheckOrder(){
                 </button>
             </form>
             <div>
-                <Adminbook></Adminbook>
+                <Adminbook user={user}></Adminbook>
             </div>
         </div>
     )

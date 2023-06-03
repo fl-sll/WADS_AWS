@@ -420,4 +420,9 @@ async def search_user(username: str):
     query = ("SELECT email FROM User WHERE username = %s")
     cursor.execute(query, (username, ))
     data = cursor.fetchall()
-    return data
+
+    print(data[0])
+    print(data[0][0])
+
+    books = get_books_from_user(data[0][0])
+    return books
