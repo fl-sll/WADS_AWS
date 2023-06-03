@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "./navbar";
 import { Link } from "react-router-dom";
 import "../styles/adminPage.css"
@@ -7,6 +7,8 @@ import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import Adminbook from "./AdminUserPage";
 
 function CheckOrder(){
+    const [user, setUser] = useState("");
+
     return(
         <div>
             <Navbar page="/adminPage"></Navbar>

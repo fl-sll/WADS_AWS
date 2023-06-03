@@ -1,19 +1,12 @@
 from datetime import date, timedelta, datetime
 from typing import Union
-
-from fastapi import Depends, FastAPI, HTTPException, status, UploadFile, File
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
 from typing_extensions import Annotated
 from fastapi.middleware.cors import CORSMiddleware
-import base64
-from PIL import Image
-import io
-import requests
-import urllib
-
 import mysql.connector
 
 conn = mysql.connector.connect(
@@ -58,11 +51,8 @@ class UpdateBookStatusRequest(BaseModel):
     status: str
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
-
 app = FastAPI()
-
 
 origins = ["*"]
 
@@ -77,24 +67,19 @@ app.add_middleware(
 def verify_password(plain_password, hashed_password):
     return pwd_context.verify(plain_password, hashed_password)
 
-
 def get_password_hash(password):
     return pwd_context.hash(password)
-
 
 def get_user(username: str):
     cursor.execute("select * from User")
     db = cursor.fetchall()
-    # print(db)
-    # print(username)
 
     for i in range(len(db)):
         if username == db[i][2]:
-                # user_dict = db[username]
-                # return UserInDB(**user_dict)
             return db[i]
     return False
 
+# only return available books from book table
 def get_available_books():
     cursor.execute("SELECT * FROM Book WHERE status = 'available'")
     books = cursor.fetchall()
@@ -110,6 +95,7 @@ def get_available_books():
         })
     return book_details
 
+# get books from book table
 def get_books():
     cursor.execute("SELECT * FROM Book")
     books = cursor.fetchall()
@@ -125,6 +111,7 @@ def get_books():
         })
     return book_details
 
+# get books from user, based on that one user
 def get_books_from_user(user: str):
     cursor.execute("SELECT bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM Borrow bo JOIN Book b ON bo.bookID = b.bookID where uid = %s", (user,))
     books = cursor.fetchall()
@@ -143,19 +130,55 @@ def get_books_from_user(user: str):
         })
     return book_details
 
-def insert_book_details(book_id: int, title: str, author: str, image_data: str):
-    # base64_image = base64.b64encode(image_data).decode("utf-8")
+# get books from user, based on that one user
+def get_borrowed_books():
+    cursor.execute("SELECT bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM Borrow bo JOIN Book b ON bo.bookID = b.bookID")
+    books = cursor.fetchall()
+    book_details = []
+    for book in books:
+        # book_id, title, author, image, status = book
+        uid, bookID, title, image, date, due, status = book
+        book_details.append({
+            "uid" : uid,
+            "bookID" : bookID,
+            "title":title,
+            "image": image,
+            "borrow_date": date,
+            "due_date" : due,
+            "status": status
+        })
+    return book_details
 
+# for admin, on the add book admin page
+def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     cursor.execute(
         "INSERT INTO Book VALUES (%s, %s, %s, %s, %s)",
         (book_id, title, author, image_data, "available")
     )
     conn.commit()
 
+# when clicked, it will change the status on the database
 def update_book_status(book_id: int, status: str):
     cursor.execute(
         "UPDATE Book SET status = %s WHERE bookID = %s",
         (status, book_id)
+    )
+    conn.commit()
+
+def update_order_status(book_id: int, status: str):
+    cursor.execute(
+        "UPDATE Book SET status = %s WHERE bookID = %s",
+        (status, book_id)
+    )
+    conn.commit()
+
+# add info to borrow table with user and book details, also with their dates
+def add_borrow_list(book_id: int, uid: str):
+    today = date.today()
+    due = date.today() + timedelta(days=3)
+    cursor.execute(
+        "INSERT INTO Borrow VALUES (%s, %s, %s, %s, %s)",
+        (uid, book_id, today, due, "ordered")
     )
     conn.commit()
 
@@ -168,19 +191,16 @@ def add_borrow_list(book_id: int, uid: str):
     )
     conn.commit()
 
-
+# check the user
 def authenticate_user(username: str, password: str):
     cursor.execute("select * from User")
     user = cursor.fetchall()
     for i in range(len(user)):
-        # print(i)
-        # print(username)
-        # print(user[i][2])
         if username == user[i][2] and verify_password(password, user[i][3]):
-            # return {"status": "ok"})
             return username
     return False
 
+# return logged in user fullname
 def get_user_full_name(username: str):
     cursor.execute("SELECT fullname FROM User WHERE username = %s", (username,))
     result = cursor.fetchall()
@@ -188,6 +208,7 @@ def get_user_full_name(username: str):
         return result[0]
     else:
         return None
+
 
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
@@ -198,8 +219,6 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
-
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
@@ -221,7 +240,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     # print("user :", user)
     return user
 
-
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
@@ -229,26 +247,25 @@ async def get_current_active_user(
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
+# @app.get("/dummy")
+# def check():
+#     cursor.execute("select * from User")
+#     anya = cursor.fetchall()
+#     # print(anya)
+#     return {"data":"data"}
 
-@app.get("/dummy")
-def check():
-    cursor.execute("select * from User")
-    anya = cursor.fetchall()
-    # print(anya)
-    return {"data":"data"}
+# class Test(BaseModel):
+#     username: str
 
-class Test(BaseModel):
-    username: str
+# @app.post("/login")
+# def login(item: Test):
+#     cursor.execute("select * from User")
+#     anya = cursor.fetchall()
 
-@app.post("/login")
-def login(item: Test):
-    cursor.execute("select * from User")
-    anya = cursor.fetchall()
-
-    if item.username in anya[0]:
-        return {"status": "ok"}
-    else:
-        return {"status": "not ok"}
+#     if item.username in anya[0]:
+#         return {"status": "ok"}
+#     else:
+#         return {"status": "not ok"}
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(
@@ -273,12 +290,11 @@ async def read_users_me(
 ):
     return current_user[1]
 
-
 @app.get("/users/me/items/")
 async def read_own_items(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
-    return [{"item_id": "Foo", "owner": current_user.username}]
+    return [{"item_id": "Foo", "owner": current_user}]
 
 @app.get("/availableBooks")
 async def get_available_books_handler():
@@ -287,6 +303,10 @@ async def get_available_books_handler():
 @app.get("/books")
 async def get_books_handler():
     return get_books()
+
+@app.get("/borrowedBooks")
+async def get_borrowed_book_handler():
+    return get_borrowed_books()
 
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     cursor.execute(
@@ -336,35 +356,35 @@ async def update_book_status_handler(
     update_book_status(book_id, request_body.status)
     return {"message": "Book status updated successfully"}
 
-@app.post("/borrowBook")
-async def add_borrow_book(
-    uid: str,
-    bookID: int
-):
-    today = date.today()
-    due = date.today() + timedelta(days=3)
-    print(today)
-    print(due)
-    print(date.today())
+# @app.post("/borrowBook")
+# async def add_borrow_book(
+#     uid: str,
+#     bookID: int
+# ):
+#     today = date.today()
+#     due = date.today() + timedelta(days=3)
+#     print(today)
+#     print(due)
+#     print(date.today())
 
-    cursor.execute("SELECT * FROM Book")
-    bookList = cursor.fetchall()
+#     cursor.execute("SELECT * FROM Book")
+#     bookList = cursor.fetchall()
 
-    for i in range(len(bookList)):
-        if bookList[i][0] == bookID:
-            if bookList[i][4] == "available":
-                query = "INSERT INTO Borrow VALUES (%s, %s, %s, %s, %s)"
-                data = (uid, bookID, today, due, "ordered")
-                cursor.execute(query, data)
-                conn.commit()
+#     for i in range(len(bookList)):
+#         if bookList[i][0] == bookID:
+#             if bookList[i][4] == "available":
+#                 query = "INSERT INTO Borrow VALUES (%s, %s, %s, %s, %s)"
+#                 data = (uid, bookID, today, due, "ordered")
+#                 cursor.execute(query, data)
+#                 conn.commit()
 
-                updateQuery = "UPDATE Book SET status = %s WHERE bookID = %s"
-                change = ("unavailable", bookID)
-                cursor.execute(updateQuery, change)
-                conn.commit()
-                return "added"
+#                 updateQuery = "UPDATE Book SET status = %s WHERE bookID = %s"
+#                 change = ("unavailable", bookID)
+#                 cursor.execute(updateQuery, change)
+#                 conn.commit()
+#                 return "added"
 
-    return "not added"
+#     return "not added"
 
 @app.get("/bookList/me/")
 async def book_list(

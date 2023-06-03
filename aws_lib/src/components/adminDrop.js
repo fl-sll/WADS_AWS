@@ -1,13 +1,13 @@
 import React, { useState , useEffect} from 'react';
 import "../styles/adminDrop.css"
 
-function Availabilitydropdown({ id, toggleImage }) {
+function Availabilitydropdown({ bookId, toggleImage }) {
     const [click, setClick] = useState(false);
 
     const handleClick = () => setClick(!click);
-  
+
     const handleStatusChange = (status) => {
-      toggleImage(id, status);
+        toggleImage(bookId, status);
     };
 
     return (
@@ -18,11 +18,11 @@ function Availabilitydropdown({ id, toggleImage }) {
             <summary role="button">
                 Change Status
             </summary>
-            <li onClick={() => handleStatusChange("available")}>
-                available
+            <li onClick={() => handleStatusChange("ordered")}>
+                Cancel Order
             </li>
-            <li onClick={() => handleStatusChange("unavailable")}>
-                unavailable
+            <li onClick={() => handleStatusChange("collected")}>
+                Accept Order
             </li>
         </details>
     );
