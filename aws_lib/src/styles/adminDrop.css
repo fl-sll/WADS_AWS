@@ -1,0 +1,30 @@
+.dropdown-menus {
+    list-style: none;
+    max-width: 100%;
+}
+
+details{
+    padding-top: 10px;
+    margin-bottom: 10px;
+}
+
+summary{
+    padding-bottom: 10px;
+    color:rgb(0, 0, 0);
+}
+
+.dropdown-menus li {
+    background: #383838;
+    cursor: pointer;
+    text-decoration: none;
+    padding: 10px;
+    color:rgb(225, 223, 223);
+}
+
+.dropdown-menus li:hover {
+    background: rgb(131, 131, 131);
+}
+
+/* .dropdown-menus.clicked {
+    display: none;
+} */

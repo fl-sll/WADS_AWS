@@ -4,18 +4,21 @@ import React, { useState, useEffect } from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
+import Availabilitydropdown from "./adminDrop"
 
 
-function UserBook({ id, title, author, completed }) {
+function Adminbook({ id, title, author, completed }) {
   const [bookData, setBookData] = useState([]);
+  const [refreshData, setRefreshData] = useState(false);
 
   const toggleImage = async (bookId, currentStatus) => {
     const updatedStatus = currentStatus === "available" ? "unavailable" : "available";
     const token = window.localStorage.getItem("access_token");
+    console.log(bookId);
 
     axios
-      .get(
-        `http://localhost:8000/bookList/me`,
+      .put(
+        `http://localhost:8000/updateBook/${bookId}`,
         { status: updatedStatus },
         {
           headers: {
@@ -32,13 +35,16 @@ function UserBook({ id, title, author, completed }) {
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setRefreshData(prevValue => !prevValue);
       });
   };
 
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get("http://localhost:8000/bookList/me", {
+      .get("http://localhost:8000/books", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -46,6 +52,7 @@ function UserBook({ id, title, author, completed }) {
       .then((response) => {
         const book = response.data;
         setBookData(book);
+        console.log();
       })
       .catch((error) => {
         console.log(error);
@@ -64,7 +71,7 @@ function UserBook({ id, title, author, completed }) {
             <div class="UserContents">
               <h2>{book.title}</h2>
               <p>Borrowed: {book.borrow_date}</p>
-              <p>Due Date: {book.due_date}</p>
+              <p>Due Date: {book.id}</p>
             </div>
           </div>
           <div className="right">
@@ -76,9 +83,7 @@ function UserBook({ id, title, author, completed }) {
                 size = "5x"
               />
             </div>
-            <button className="button-17" onClick={() => toggleImage(book.bookID, book.status)}>
-              Cancel
-            </button>
+            <Availabilitydropdown bookId = {book.id} toggleImage = {toggleImage} />
           </div>
         </div>
       ))}
@@ -86,4 +91,4 @@ function UserBook({ id, title, author, completed }) {
   );
 }
 
-export default UserBook;
+export default Adminbook;

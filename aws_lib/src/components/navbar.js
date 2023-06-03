@@ -5,31 +5,31 @@ import {Link, useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleUser} from '@fortawesome/free-solid-svg-icons'
 import { useOnHoverOutside } from "./../hooks/Hover";
-import axios from 'axios';
-import Dropdown from "./Dropdown";
+// import axios from 'axios';
+import Navdropdown from "./NavbarDropdown";
 import Under from './under';
 
 function Navbar({page}){
-    const[name, setName] = useState("");
-    const navigate = useNavigate();
+    // const[name, setName] = useState("");
+    // const navigate = useNavigate();
     const dropdownRef = useRef(null); // Create a reference for dropdown container
     const [isMenuDropDownOpen, setMenuDropDownOpen] = useState(false);
 
-    useEffect(() => {
-        const token = window.localStorage.getItem("access_token");
-        axios
-            .get("http://localhost:8000/users/me", {
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
-            })
-            .then((response) => {
-                setName(response.data);
-            })
-            .catch((error) => {
-                console.log(error);
-            });
-    }, []);
+    // useEffect(() => {
+    //     const token = window.localStorage.getItem("access_token");
+    //     axios
+    //         .get("http://localhost:8000/users/me", {
+    //             headers: {
+    //                 Authorization: `Bearer ${token}`
+    //             }
+    //         })
+    //         .then((response) => {
+    //             setName(response.data);
+    //         })
+    //         .catch((error) => {
+    //             console.log(error);
+    //         });
+    // }, []);
 
     const closeHoverMenu = () => {
         setMenuDropDownOpen(false);
@@ -54,7 +54,7 @@ function Navbar({page}){
                                     <FontAwesomeIcon icon={faCircleUser} size='3x'color='#b5b5b5'/>
                                 </Link>
                             </button>
-                            {isMenuDropDownOpen && <Dropdown />}
+                            {isMenuDropDownOpen && <Navdropdown />}
                         </div>
                     </li>
                 </ul>

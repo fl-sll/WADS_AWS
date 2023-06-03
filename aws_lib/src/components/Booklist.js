@@ -42,7 +42,7 @@ function BookList({ id, title, author, completed }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get("http://localhost:8000/books/", {
+      .get("http://localhost:8000/availableBooks/", {
         headers: {
           Authorization: `Bearer ${token}`
         }

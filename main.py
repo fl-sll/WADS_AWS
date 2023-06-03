@@ -95,8 +95,23 @@ def get_user(username: str):
             return db[i]
     return False
 
-def get_books():
+def get_available_books():
     cursor.execute("SELECT * FROM Book WHERE status = 'available'")
+    books = cursor.fetchall()
+    book_details = []
+    for book in books:
+        book_id, title, author, image, status = book
+        book_details.append({
+            "id": book_id,
+            "title": title,
+            "author": author,
+            "image": image,
+            "status": status
+        })
+    return book_details
+
+def get_books():
+    cursor.execute("SELECT * FROM Book")
     books = cursor.fetchall()
     book_details = []
     for book in books:
@@ -265,6 +280,10 @@ async def read_own_items(
 ):
     return [{"item_id": "Foo", "owner": current_user.username}]
 
+@app.get("/availableBooks")
+async def get_available_books_handler():
+    return get_available_books()
+
 @app.get("/books")
 async def get_books_handler():
     return get_books()
@@ -297,13 +316,23 @@ async def display_image():
     return book
 
 @app.put("/books/{book_id}")
-async def update_book_status_handler(
+async def borrow_book_status_handler(
     book_id: int,
     request_body: UpdateBookStatusRequest,
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
     user = current_user[2]
     add_borrow_list(book_id, user)
+    update_book_status(book_id, request_body.status)
+    return {"message": "Book status updated successfully"}
+
+@app.put("/updateBook/{book_id}")
+async def update_book_status_handler(
+    book_id: int,
+    request_body: UpdateBookStatusRequest,
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    user = current_user[2]
     update_book_status(book_id, request_body.status)
     return {"message": "Book status updated successfully"}
 
@@ -349,7 +378,4 @@ async def search_user(username: str):
     query = ("SELECT email FROM User WHERE username = %s")
     cursor.execute(query, (username, ))
     data = cursor.fetchall()
-
-    
-    
     return data

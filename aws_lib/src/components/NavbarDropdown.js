@@ -3,7 +3,7 @@ import "../styles/Dropdown.css"
 import {Link, useNavigate} from "react-router-dom";
 import axios from 'axios';
 
-function Dropdown() {
+function Navdropdown() {
     const [click, setClick] = useState(false);
     const [name, setName] = useState("");
     const [loading, setLoading] = useState(true);
@@ -13,6 +13,7 @@ function Dropdown() {
 
     const handleLogout = () => {
         window.localStorage.removeItem("access_token");
+        navigate("/")
     };
 
     useEffect(() => {
@@ -63,4 +64,4 @@ function Dropdown() {
     );
 }
 
-export default Dropdown;
+export default Navdropdown;

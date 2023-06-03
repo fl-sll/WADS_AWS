@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "../styles/adminPage.css"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
-import UserBook from "./UserBook";
+import Adminbook from "./AdminUserPage";
 
 function CheckOrder(){
     return(
@@ -17,7 +17,7 @@ function CheckOrder(){
                 </button>
             </form>
             <div>
-                <UserBook></UserBook>
+                <Adminbook></Adminbook>
             </div>
         </div>
     )
