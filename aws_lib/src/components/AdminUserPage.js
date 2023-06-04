@@ -2,7 +2,7 @@ import "../styles/UserBook.css";
 import React, { useState, useEffect } from "react";
 // import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faClipboardCheck, faBoxCircleCheck} from '@fortawesome/free-solid-svg-icons'
+import {faBoxCircleCheck, faCircleCheck} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 import Availabilitydropdown from "./adminDrop"
 
@@ -43,7 +43,7 @@ function Adminbook({ user, id, title, author, completed }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get("http://localhost:8000/borrowedBooks", {
+      .get(`http://localhost:8000/borrowedBooks/${user}`, {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -80,7 +80,7 @@ function Adminbook({ user, id, title, author, completed }) {
             <p>{book.status}</p>
             <div className="availableimg">
               <FontAwesomeIcon
-                icon = {faBoxCircleCheck}
+                icon = {faCircleCheck}
                 color = {"#628B48"}
                 size = "5x"
               />

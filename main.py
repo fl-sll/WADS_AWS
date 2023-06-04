@@ -320,9 +320,18 @@ async def get_available_books_handler():
 async def get_books_handler():
     return get_books()
 
-@app.get("/borrowedBooks")
-async def get_borrowed_book_handler():
-    return get_borrowed_books()
+@app.get("/borrowedBooks/{user}")
+async def get_borrowed_book_handler(
+    user: str
+):
+    # return get_borrowed_books()
+    if user == "null":
+        return get_borrowed_books()
+    else:
+        query = ("SELECT email FROM User WHERE email = %s")
+        cursor.execute(query, (user, ))
+        data = cursor.fetchall()
+        return get_books_from_user(data[0][0])
 
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     cursor.execute(
@@ -417,12 +426,12 @@ async def book_list(
 
 @app.get("/searchUser")
 async def search_user(username: str):
-    query = ("SELECT email FROM User WHERE username = %s")
-    cursor.execute(query, (username, ))
-    data = cursor.fetchall()
+    if username == "":
+        return get_borrowed_books()
+    else:
 
-    print(data[0])
-    print(data[0][0])
+        query = ("SELECT email FROM User WHERE username = %s")
+        cursor.execute(query, (username, ))
+        data = cursor.fetchall()
 
-    books = get_books_from_user(data[0][0])
-    return books
+        return get_books_from_user(data[0][0])
