@@ -57,7 +57,7 @@ function Adminbook({ user, id, title, author, completed }) {
         console.log(error);
       });
 
-  }, [refreshData]);
+  }, [refreshData, user]);
 
   return (
     <div>

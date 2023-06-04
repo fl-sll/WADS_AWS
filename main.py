@@ -102,7 +102,7 @@ def get_books():
     book_details = []
     for book in books:
         book_id, title, author, image, status = book
-        book_details.append({
+        book_details.append({ 
             "id": book_id,
             "title": title,
             "author": author,
@@ -113,13 +113,14 @@ def get_books():
 
 # get books from user, based on that one user
 def get_books_from_user(user: str):
-    cursor.execute("SELECT bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM Borrow bo JOIN Book b ON bo.bookID = b.bookID where uid = %s", (user,))
+    cursor.execute("SELECT u.fullname, bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM Borrow bo JOIN Book b ON bo.bookID = b.bookID JOIN User u ON bo.uid = u.email WHERE uid = %s", (user,))
     books = cursor.fetchall()
     book_details = []
     for book in books:
         # book_id, title, author, image, status = book
-        uid, bookID, title, image, date, due, status = book
+        fullname, uid, bookID, title, image, date, due, status = book
         book_details.append({
+            "fullname" : fullname,
             "uid" : uid,
             "bookID" : bookID,
             "title":title,
@@ -324,14 +325,25 @@ async def get_books_handler():
 async def get_borrowed_book_handler(
     user: str
 ):
+    userQuery = ("SELECT email from User")
+    cursor.execute(userQuery)
+    userList = cursor.fetchall()
+    print(userList)
+    users = []
+    for i in range(len(userList)):
+        users.append(userList[i][0])
+    print(users)
     # return get_borrowed_books()
-    if user == "null":
+    if user == "all":
         return get_borrowed_books()
-    else:
+    elif user in users:
         query = ("SELECT email FROM User WHERE email = %s")
         cursor.execute(query, (user, ))
         data = cursor.fetchall()
         return get_books_from_user(data[0][0])
+    else:
+        print("cant find user")
+        return "Can't find user"
 
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     cursor.execute(
