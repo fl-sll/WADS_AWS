@@ -7,7 +7,7 @@ import axios from 'axios';
 import Availabilitydropdown from "./adminDrop"
 
 
-function Adminbook({ user, id, title, author, completed }) {
+function Adminbook({ user }) {
   const [bookData, setBookData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
 
@@ -43,10 +43,13 @@ function Adminbook({ user, id, title, author, completed }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get(`http://localhost:8000/borrowedBooks/${user}`, {
+      .get(`http://localhost:8000/borrowedBooks/`, {
         headers: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        params: {
+          user: user !== "" ? user : undefined, // Pass the user email address as a query parameter
+        },
       })
       .then((response) => {
         const book = response.data;

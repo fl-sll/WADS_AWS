@@ -1,5 +1,5 @@
 from datetime import date, timedelta, datetime
-from typing import Union
+from typing import Union, Optional
 from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from jose import JWTError, jwt
@@ -321,29 +321,37 @@ async def get_available_books_handler():
 async def get_books_handler():
     return get_books()
 
-@app.get("/borrowedBooks/{user}")
-async def get_borrowed_book_handler(
-    user: str
-):
-    userQuery = ("SELECT email from User")
-    cursor.execute(userQuery)
-    userList = cursor.fetchall()
-    print(userList)
-    users = []
-    for i in range(len(userList)):
-        users.append(userList[i][0])
-    print(users)
-    # return get_borrowed_books()
-    if user == "all":
+@app.get("/borrowedBooks")
+async def get_borrowed_book_handler(user: Optional[str] = None):
+    if user is None:
         return get_borrowed_books()
-    elif user in users:
-        query = ("SELECT email FROM User WHERE email = %s")
-        cursor.execute(query, (user, ))
-        data = cursor.fetchall()
-        return get_books_from_user(data[0][0])
     else:
-        print("cant find user")
-        return "Can't find user"
+        return get_books_from_user(user)
+
+
+# @app.get("/borrowedBooks/{user}")
+# async def get_borrowed_book_handler(
+#     user: str
+# ):
+#     userQuery = ("SELECT email from User")
+#     cursor.execute(userQuery)
+#     userList = cursor.fetchall()
+#     print(userList)
+#     users = []
+#     for i in range(len(userList)):
+#         users.append(userList[i][0])
+#     print(users)
+#     # return get_borrowed_books()
+#     if user == "all":
+#         return get_borrowed_books()
+#     elif user in users:
+#         query = ("SELECT email FROM User WHERE email = %s")
+#         cursor.execute(query, (user, ))
+#         data = cursor.fetchall()
+#         return get_books_from_user(data[0][0])
+#     else:
+#         print("cant find user")
+#         return "Can't find user"
 
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     cursor.execute(
