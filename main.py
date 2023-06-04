@@ -444,14 +444,13 @@ async def book_list(
     user = current_user[2]
     return get_books_from_user(user)
 
-@app.get("/searchUser")
-async def search_user(username: str):
-    if username == "":
-        return get_borrowed_books()
+@app.get("/searchBook")
+async def search_user(search: str):
+    query = ("SELECT * from Book WHERE title LIKE %s AND status = 'available'")
+    word = "%"+search+"%"
+    cursor.execute(query, (word, ))
+    books = cursor.fetchall()
+    if len(books) == 0:
+        return "no books with that title"
     else:
-
-        query = ("SELECT email FROM User WHERE username = %s")
-        cursor.execute(query, (username, ))
-        data = cursor.fetchall()
-
-        return get_books_from_user(data[0][0])
+        return books
