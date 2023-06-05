@@ -6,6 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faNewspaper, faMarker, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import Carousel from "./Carousel"
 import axios from "axios";
+import { BACKEND_LINK } from "./Const";
 
 
 function Main(){
@@ -20,7 +21,7 @@ function Main(){
         e.preventDefault()
 
         axios
-        .get(`http://127.0.0.1:8000/searchBook?search=${searchWord}`)
+        .get(`${BACKEND_LINK}/searchBook?search=${searchWord}`)
 
         .then((response) => {
             console.log(response)

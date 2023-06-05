@@ -5,6 +5,7 @@ import "../styles/adminPage.css"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUserCheck, faBook} from '@fortawesome/free-solid-svg-icons'
 import axios from "axios";
+import { BACKEND_LINK } from "./Const";
 
 function AdminPage(){
     const navigate = useNavigate();
@@ -13,7 +14,7 @@ function AdminPage(){
     useEffect(() => {
         const token = window.localStorage.getItem("access_token");
         axios
-          .get(`http://localhost:8000/checkAdmin/`, {
+          .get(`${BACKEND_LINK}/checkAdmin/`, {
             headers: {
               Authorization: `Bearer ${token}`
             }

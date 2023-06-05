@@ -2,6 +2,7 @@ import React, { useState , useEffect} from 'react';
 import "../styles/Dropdown.css"
 import {Link, useNavigate} from "react-router-dom";
 import axios from 'axios';
+import { BACKEND_LINK } from "./Const";
 
 function Navdropdown() {
     const [click, setClick] = useState(false);
@@ -19,7 +20,7 @@ function Navdropdown() {
     useEffect(() => {
         const token = window.localStorage.getItem("access_token");
         axios
-            .get("http://localhost:8000/users/me", {
+            .get(BACKEND_LINK + "/users/me", {
                 headers: {
                     Authorization: `Bearer ${token}`
                 }

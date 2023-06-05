@@ -7,7 +7,6 @@ import {faCircleUser} from '@fortawesome/free-solid-svg-icons'
 import { useOnHoverOutside } from "./../hooks/Hover";
 // import axios from 'axios';
 import Navdropdown from "./NavbarDropdown";
-import Under from './under';
 
 function Navbar({page}){
     // const[name, setName] = useState("");
@@ -18,7 +17,7 @@ function Navbar({page}){
     // useEffect(() => {
     //     const token = window.localStorage.getItem("access_token");
     //     axios
-    //         .get("http://localhost:8000/users/me", {
+    //         .get(BACKEND_LINK + "/users/me", {
     //             headers: {
     //                 Authorization: `Bearer ${token}`
     //             }

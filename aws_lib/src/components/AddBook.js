@@ -3,6 +3,7 @@ import Navbar from "./navbar";
 import "../styles/addBook.css"
 import axios from "axios";
 import {useNavigate} from "react-router-dom";
+import { BACKEND_LINK } from "./Const";
 
 function AddBook(){
     const [id, setId] = useState(0);
@@ -25,7 +26,7 @@ function AddBook(){
         const token = window.localStorage.getItem("access_token");
         axios
             .post(
-                `http://127.0.0.1:8000/addBook/${id}`, data ,
+                `${BACKEND_LINK}/addBook/${id}`, data ,
             {
                 headers:{
                     Authorization: `Bearer ${token}`,
@@ -49,7 +50,7 @@ function AddBook(){
         useEffect(() => {
             const token = window.localStorage.getItem("access_token");
             axios
-              .get(`http://localhost:8000/checkAdmin/`, {
+              .get(`${BACKEND_LINK}/checkAdmin/`, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }

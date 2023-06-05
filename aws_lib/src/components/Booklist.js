@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
+import { BACKEND_LINK } from "./Const";
 
 
 function BookList({ word }) {
@@ -16,10 +17,11 @@ function BookList({ word }) {
 
     axios
       .put(
-        `http://localhost:8000/books/${bookId}`,
+        `${BACKEND_LINK}/books/${bookId}`,
         { status: updatedStatus },
         {
           headers: {
+            Accept: "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
@@ -42,10 +44,11 @@ function BookList({ word }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get("http://localhost:8000/availableBooks/", {
+      .get(BACKEND_LINK + "/availableBooks/", {
         headers: {
           Authorization: `Bearer ${token}`
         },
+        withCredentials: false,
         params: {
           search : word !== "" ? word : undefined,
         },
@@ -69,7 +72,7 @@ function BookList({ word }) {
             <div>
               <img src={`${book.image}`} alt={book.title} className="bookimg"/>
             </div>
-            <div class="Contents">
+            <div className="Contents">
               <h2>{book.title}</h2>
               <p>{book.author}</p>
             </div>
