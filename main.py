@@ -30,6 +30,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Union[str, None] = None
+    is_admin: bool
 
 class User(BaseModel):
     username: str
@@ -37,6 +38,7 @@ class User(BaseModel):
     email: Union[str, None] = None
     password:  Union[str, None] = None
     disabled: Union[bool, None] = None
+    is_admin: bool = False
 
 class UserInDB(User):
     hashed_password: str
@@ -49,6 +51,14 @@ class Book(BaseModel):
 
 class UpdateBookStatusRequest(BaseModel):
     status: str
+
+class Admin(BaseModel):
+    adminID: str
+    full_name: Union[str, None] = None
+    email: Union[str, None] = None
+    password:  Union[str, None] = None
+    disabled: Union[bool, None] = None
+    is_admin: bool = True
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -76,8 +86,21 @@ def get_user(username: str):
 
     for i in range(len(db)):
         if username == db[i][2]:
+            db[i] += (0,)
+            print(db[i])
             return db[i]
     return False
+
+def get_admin(username: str):
+    cursor.execute("select * from Admin")
+    db = cursor.fetchall()
+
+    for i in range(len(db)):
+        if username == db[i][2]:
+            db[i] += (1,)
+            return db[i]
+    return False
+
 
 # only return available books from book table
 def get_available_books():
@@ -237,11 +260,24 @@ def add_borrow_list(book_id: int, uid: str):
     conn.commit()
 
 # check the user
+# def authenticate_user(username: str, password: str):
+#     cursor.execute("select * from User")
+#     user = cursor.fetchall()
+#     for i in range(len(user)):
+#         if username == user[i][2] and verify_password(password, user[i][3]):
+#             return username
+#     return False
+
 def authenticate_user(username: str, password: str):
-    cursor.execute("select * from User")
+    cursor.execute("SELECT * FROM User")
     user = cursor.fetchall()
     for i in range(len(user)):
         if username == user[i][2] and verify_password(password, user[i][3]):
+            return username
+    cursor.execute("SELECT * FROM Admin")
+    admin = cursor.fetchall()
+    for i in range(len(admin)):
+        if username == admin[i][2] and verify_password(password, admin[i][3]):
             return username
     return False
 
@@ -265,6 +301,25 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
 
+# async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
+#     credentials_exception = HTTPException(
+#         status_code=status.HTTP_401_UNAUTHORIZED,
+#         detail="Could not validate credentials",
+#         headers={"WWW-Authenticate": "Bearer"},
+#     )
+#     try:
+#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+#         username: str = payload.get("sub")
+#         if username is None:
+#             raise credentials_exception
+#         token_data = TokenData(username=username)
+#     except JWTError:
+#         raise credentials_exception
+#     user = get_user(username=token_data.username)
+#     if user is None:
+#         raise credentials_exception
+#     return user
+
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -274,16 +329,24 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         username: str = payload.get("sub")
+        is_admin: bool = payload.get("is_admin")
         if username is None:
             raise credentials_exception
-        token_data = TokenData(username=username)
+        token_data = TokenData(username=username, is_admin=is_admin)
     except JWTError:
         raise credentials_exception
-    user = get_user(username=token_data.username)
-    if user is None:
-        raise credentials_exception
-    # print("user :", user)
-    return user
+    
+    # Check if the user is a regular user or an admin
+    if token_data.is_admin:
+        admin = get_admin(username=token_data.username)
+        if admin is None:
+            raise credentials_exception
+        return admin
+    else:
+        user = get_user(username=token_data.username)
+        if user is None:
+            raise credentials_exception
+        return user
 
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)]
@@ -292,25 +355,25 @@ async def get_current_active_user(
         raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-# @app.get("/dummy")
-# def check():
-#     cursor.execute("select * from User")
-#     anya = cursor.fetchall()
-#     # print(anya)
-#     return {"data":"data"}
+async def is_admin_user(current_user: Admin = Depends(get_current_user)):
+    return current_user
 
-# class Test(BaseModel):
-#     username: str
-
-# @app.post("/login")
-# def login(item: Test):
-#     cursor.execute("select * from User")
-#     anya = cursor.fetchall()
-
-#     if item.username in anya[0]:
-#         return {"status": "ok"}
-#     else:
-#         return {"status": "not ok"}
+# @app.post("/token", response_model=Token)
+# async def login_for_access_token(
+#     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
+# ):
+#     user = authenticate_user(form_data.username, form_data.password)
+#     if not user:
+#         raise HTTPException(
+#             status_code=status.HTTP_401_UNAUTHORIZED,
+#             detail="Incorrect username or password",
+#             headers={"WWW-Authenticate": "Bearer"},
+#         )
+#     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+#     access_token = create_access_token(
+#         data={"sub": user}, expires_delta=access_token_expires
+#     )
+#     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(
@@ -324,8 +387,13 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    is_admin = isinstance(user, Admin)
     access_token = create_access_token(
-        data={"sub": user}, expires_delta=access_token_expires
+        data={
+            "sub": user,
+            "is_admin": is_admin
+        },
+        expires_delta=access_token_expires
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
@@ -353,36 +421,20 @@ async def get_books_handler():
     return get_books()
 
 @app.get("/borrowedBooks")
-async def get_borrowed_book_handler(user: Optional[str] = None):
+async def get_borrowed_book_handler(
+    current_user: Annotated[Admin, Depends(is_admin_user)],
+    user: Optional[str] = None
+):
+    # print(current_user)
+    if not current_user.is_admin and user != current_user.email:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to access this resource",
+        )
     if user is None:
         return get_borrowed_books()
     else:
         return get_books_from_user(user)
-
-
-# @app.get("/borrowedBooks/{user}")
-# async def get_borrowed_book_handler(
-#     user: str
-# ):
-#     userQuery = ("SELECT email from User")
-#     cursor.execute(userQuery)
-#     userList = cursor.fetchall()
-#     print(userList)
-#     users = []
-#     for i in range(len(userList)):
-#         users.append(userList[i][0])
-#     print(users)
-#     # return get_borrowed_books()
-#     if user == "all":
-#         return get_borrowed_books()
-#     elif user in users:
-#         query = ("SELECT email FROM User WHERE email = %s")
-#         cursor.execute(query, (user, ))
-#         data = cursor.fetchall()
-#         return get_books_from_user(data[0][0])
-#     else:
-#         print("cant find user")
-#         return "Can't find user"
 
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
     cursor.execute(
@@ -395,8 +447,6 @@ def insert_book_details(book_id: int, title: str, author: str, image_data: str):
 def display_book():
     cursor.execute("SELECT * FROM Book")
     books = cursor.fetchall()
-    # print(books[0])
-    # print(books[0][3])
     return books[0][3]
 
 @app.post("/addBook")
@@ -404,12 +454,11 @@ async def add_book_to_database(id: int, title: str, author: str, file: str):
     insert_book_details(id, title, author, file)
     return "submitted"
 
-
-@app.get("/display")
-async def display_image():
-    cursor.execute("SElECT * FROM Books;")
-    book = cursor.fetchall()
-    return book
+# @app.get("/display")
+# async def display_image():
+#     cursor.execute("SElECT * FROM Books;")
+#     book = cursor.fetchall()
+#     return book
 
 @app.put("/books/{book_id}")
 async def borrow_book_status_handler(
@@ -426,47 +475,15 @@ async def borrow_book_status_handler(
 async def update_book_status_handler(
     book_id: int,
     request_body: UpdateBookStatusRequest,
-    current_user: Annotated[User, Depends(get_current_active_user)]
+    current_user: Annotated[Admin, Depends(is_admin_user)]
 ):
     if request_body.status == "ordered":
         cancel_order_status(book_id)
-        # print(book_id, request_body.status)
     elif request_body.status == "collected":
         update_order_status(book_id, request_body.status)
-        # print(book_id, request_body.status)
     else:
         return {"error": "Book status mismatch"}
     return {"message": "Book status updated successfully"}
-
-# @app.post("/borrowBook")
-# async def add_borrow_book(
-#     uid: str,
-#     bookID: int
-# ):
-#     today = date.today()
-#     due = date.today() + timedelta(days=3)
-#     print(today)
-#     print(due)
-#     print(date.today())
-
-#     cursor.execute("SELECT * FROM Book")
-#     bookList = cursor.fetchall()
-
-#     for i in range(len(bookList)):
-#         if bookList[i][0] == bookID:
-#             if bookList[i][4] == "available":
-#                 query = "INSERT INTO Borrow VALUES (%s, %s, %s, %s, %s)"
-#                 data = (uid, bookID, today, due, "ordered")
-#                 cursor.execute(query, data)
-#                 conn.commit()
-
-#                 updateQuery = "UPDATE Book SET status = %s WHERE bookID = %s"
-#                 change = ("unavailable", bookID)
-#                 cursor.execute(updateQuery, change)
-#                 conn.commit()
-#                 return "added"
-
-#     return "not added"
 
 @app.get("/bookList/me/")
 async def book_list(
@@ -477,14 +494,6 @@ async def book_list(
 
 @app.get("/searchBook")
 async def search_user(search: Optional[str] = None):
-    # query = ("SELECT * from Book WHERE title LIKE %s AND status = 'available'")
-    # word = "%"+search+"%"
-    # cursor.execute(query, (word, ))
-    # books = cursor.fetchall()
-    # if len(books) == 0:
-    #     return "no books with that title"
-    # else:
-    #     return books
     if search is None:
         return get_books()
     else:
