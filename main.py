@@ -1,8 +1,7 @@
 from datetime import date, timedelta, datetime
 from typing import Union, Optional
-from fastapi import Depends, FastAPI, HTTPException, status, Form
+from fastapi import Depends, FastAPI, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from fastapi.requests import Request
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -203,7 +202,7 @@ def get_borrowed_books():
             "due_date" : due,
             "status": status
         })
-    return book_details
+    return book_details 
 
 # for admin, on the add book admin page
 def insert_book_details(book_id: int, title: str, author: str, image_data: str):
@@ -459,8 +458,7 @@ async def borrow_book_status_handler(
 @app.put("/updateBook/{book_id}")
 async def update_book_status_handler(
     book_id: int,
-    request_body: UpdateBookStatusRequest,
-    current_user: Annotated[Admin, Depends(is_admin_user)]
+    request_body: UpdateBookStatusRequest
 ):
     if request_body.status == "ordered":
         cancel_order_status(book_id)
