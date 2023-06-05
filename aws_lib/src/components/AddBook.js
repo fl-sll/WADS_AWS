@@ -8,37 +8,33 @@ function AddBook(){
     const [id, setId] = useState(0);
     const [title, setTitle] = useState("");
     const [author, setAuthor] = useState("");
-    const [file, setFile] = useState(null);
+    const [link, setLink] = useState("");
     const [valid, setValid] = useState(0);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e) => {
-        console.log("here")
+    const handleSubmit = (e) => {
         e.preventDefault();
-        setFile(e.target.files);
-        console.log(file)
-
+    
         const data ={
             id: id,
             title : title,
             author : author,
-            file : file
+            link : link
         }
-
+        
+        const token = window.localStorage.getItem("access_token");
         axios
-            .post("http://127.0.0.1:8000/addBook", data,  {
+            .post(
+                `http://127.0.0.1:8000/addBook/${id}`, data ,
+            {
                 headers:{
-                    "accept" : "application/json",
-                    "Content-Type": "multipart/form-data"
+                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/json",
                 }
             })
 
             .then((response) => {
-                // window.localStorage.setItem("access_token", response.data.access_token)
-                // console.log(response.data.access_token)
-                // navigate("/dashboard")
                 setValid(1)
-                console.log("there")
                 console.log(response)
             })
             .catch((error) => {
@@ -58,18 +54,14 @@ function AddBook(){
                   Authorization: `Bearer ${token}`
                 }
               })
-              .then((response) => {
-                if (!response.data.is_admin) {
-                    navigate("/error");
-                  }
-              })
               .catch((error) => {
                 if (error.response && error.response.status === 403) {
                   navigate("/error")
                 } else {
                   console.log(error)
                 }
-              })});
+            });
+        }, [navigate]);
 
     return(
         <div>
@@ -94,9 +86,13 @@ function AddBook(){
                         <h4>Author: </h4>
                         <input type="text" value={author} className="textBox" onChange={(e) => setAuthor(e.target.value)} placeholder="Insert author here"/>
                     </div>
-                    <div className="inputContainer">
+                    {/* <div className="inputContainer">
                         <h4>Image File: </h4>
                         <input type="file" onChange={(e) => setFile(e.target.files[0])} />
+                    </div> */}
+                    <div className="inputContainer">
+                        <h4>Link: </h4>
+                        <input type="text" value={link} className="textBox" onChange={(e) => setLink(e.target.value)} placeholder="Insert link here"/>
                     </div>
                     <div>
                         <button className="btn" type="submit" value="Upload">+ Add</button>
@@ -106,28 +102,6 @@ function AddBook(){
         </div>
     )
 };
-    // const [file, setFile] = useState(null);
-
-    // const handleUpload = (event) => {
-    //     setFile(event.target.files[0]);
-    // };
-
-    // return (
-    //     <div>
-    //     <AddBook
-    //         id="upload-file"
-    //         label="Upload File"
-    //         accept="image/*"
-    //         onUpload={handleUpload}
-    //     />
-    //     {file && (
-    //         <div>
-    //         File name: {file.name}
-    //         File size: {file.size}
-    //         </div>
-    //     )}
-    //     </div>
-    // );
 
 
 export default AddBook;

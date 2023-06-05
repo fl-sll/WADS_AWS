@@ -1,7 +1,8 @@
 from datetime import date, timedelta, datetime
 from typing import Union, Optional
-from fastapi import Depends, FastAPI, HTTPException, status
+from fastapi import Depends, FastAPI, HTTPException, status, Form
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.requests import Request
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
@@ -57,6 +58,12 @@ class Admin(BaseModel):
     email: Union[str, None] = None
     password:  Union[str, None] = None
     disabled: Union[bool, None] = None
+
+class Book(BaseModel):
+    id: int
+    title: str
+    author: str
+    link: str
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -415,7 +422,7 @@ async def get_available_books_handler(search: Optional[str] = None):
     if search is None:
         return get_available_books()
     else:
-            return get_books_search(search)
+        return get_books_search(search)
 
 @app.get("/books")
 async def get_books_handler():
@@ -436,30 +443,27 @@ async def get_borrowed_book_handler(
     else:
         return get_books_from_user(user)
 
-def insert_book_details(book_id: int, title: str, author: str, image_data: str):
-    cursor.execute(
-        "INSERT INTO Book VALUES (%s, %s, %s, %s, %s)",
-        (book_id, title, author, image_data, "available")
-    )
-    conn.commit()
-
 @app.get("/displayBook")
 def display_book():
     cursor.execute("SELECT * FROM Book")
     books = cursor.fetchall()
     return books[0][3]
 
-@app.post("/addBook")
+@app.post("/addBook/{id}")
 async def add_book_to_database(
-    id: int, title: str, author: str, file: str,
-    current_user: Annotated[Admin, Depends(is_admin_user)]
+    current_user: Annotated[Admin, Depends(is_admin_user)],
+    book: Book
 ):
     if not current_user[5] == 1:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not authorized to access this resource",
         )
-    insert_book_details(id, title, author, file)
+    id = book.id
+    title = book.title
+    author = book.author
+    link = book.link
+    insert_book_details(id, title, author, link)
     return "submitted"
 
 # @app.get("/display")
@@ -508,6 +512,12 @@ async def search_user(search: Optional[str] = None):
         return get_books_search(search)
     
 @app.get("/checkAdmin")
-async def check_admin(current_user: TokenData = Depends(get_current_user)):
-    print(current_user)
-    # return {"is_admin": current_user.is_admin}
+async def check_admin(
+    current_user: Annotated[Admin, Depends(is_admin_user)]
+):
+    if not current_user[5] == 1:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to access this resource",
+        )
+    return {"Approved": "Access granted"}
