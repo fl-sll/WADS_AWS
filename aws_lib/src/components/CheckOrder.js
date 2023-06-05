@@ -7,7 +7,7 @@ import Adminbook from "./AdminUserPage";
 
 function CheckOrder() {
   const [searchValue, setSearchValue] = useState("");
-  const [user, setUser] = useState("all");
+  const [user, setUser] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -25,7 +25,7 @@ function CheckOrder() {
           value={searchValue}
           onChange={(e) => setSearchValue(e.target.value)}
         />
-        <button type="submit" className="searchBtn">
+        <button type="submit" className="adminsearchBtn">
           <FontAwesomeIcon icon={faMagnifyingGlass} />
         </button>
       </form>

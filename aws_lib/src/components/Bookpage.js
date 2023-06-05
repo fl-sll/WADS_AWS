@@ -8,7 +8,7 @@ import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 
 function Bookpage(){
     const [searchValue, setSearchValue] = useState("");
-    const [search, setSearch] = useState("all");
+    const [search, setSearch] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();

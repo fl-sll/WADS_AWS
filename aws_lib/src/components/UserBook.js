@@ -2,7 +2,7 @@ import "../styles/UserBook.css";
 import React, { useState, useEffect } from "react";
 // import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
+import {faReceipt, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 
 
@@ -71,13 +71,13 @@ function UserBook({ id, title, author, completed }) {
             <p>{book.status}</p>
             <div className="availableimg">
               <FontAwesomeIcon
-                icon = {book.status === "available" ? faCircleCheck : faCircleXmark}
-                color = {book.status === "available" ? "#002B5B" : "#A03131"}
+                icon = {book.status === "collected" ? faBoxArchive : faReceipt}
+                color = {book.status === "collected" ? "#F4F4F2" : "#320E3B"}
                 size = "5x"
               />
             </div>
             <button className="button-17" onClick={() => toggleImage(book.bookID, book.status)}>
-              Cancel
+              Cancel order
             </button>
           </div>
         </div>
