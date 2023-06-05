@@ -1,7 +1,8 @@
-import React ,{useState}  from "react";
+import React , {useState, useEffect}  from "react";
 import Navbar from "./navbar";
 import "../styles/addBook.css"
 import axios from "axios";
+import {useNavigate} from "react-router-dom";
 
 function AddBook(){
     const [id, setId] = useState(0);
@@ -9,6 +10,7 @@ function AddBook(){
     const [author, setAuthor] = useState("");
     const [file, setFile] = useState(null);
     const [valid, setValid] = useState(0);
+    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         console.log("here")
@@ -39,11 +41,35 @@ function AddBook(){
                 console.log("there")
                 console.log(response)
             })
-            .catch(function(error) {
-              console.log(error);
+            .catch((error) => {
+                if (error.response && error.response.status === 403) {
+                  navigate("/error")
+                } else {
+                  console.log(error)
+                }
             })
         }
 
+        useEffect(() => {
+            const token = window.localStorage.getItem("access_token");
+            axios
+              .get(`http://localhost:8000/checkAdmin/`, {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              })
+              .then((response) => {
+                if (!response.data.is_admin) {
+                    navigate("/error");
+                  }
+              })
+              .catch((error) => {
+                if (error.response && error.response.status === 403) {
+                  navigate("/error")
+                } else {
+                  console.log(error)
+                }
+              })});
 
     return(
         <div>

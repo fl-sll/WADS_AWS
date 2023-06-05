@@ -8,6 +8,7 @@ import AdminPage from './components/adminPage';
 import AddBook from './components/AddBook';
 import CheckOrder from './components/CheckOrder';
 import Profile from './components/Profile';
+import Error from "./components/Error"
 
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
           <Route exact path='/addBook' element={<AddBook/>}/>
           <Route exact path='/checkOrder' element={<CheckOrder/>}/>
           <Route exact path='/profile' element={<Profile/>}/>
-          
+          <Route exact path='/error' element={<Error/>}/>
         </Routes>
       </Router>
     </div>

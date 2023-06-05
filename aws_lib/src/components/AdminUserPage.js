@@ -1,8 +1,9 @@
 import "../styles/UserBook.css";
 import React, { useState, useEffect } from "react";
+import {useNavigate} from "react-router-dom";
 // import bookImg from "../assets/tomorrow.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faBoxCircleCheck, faCircleCheck} from '@fortawesome/free-solid-svg-icons'
+import {faReceipt, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 import Availabilitydropdown from "./adminDrop"
 
@@ -10,6 +11,7 @@ import Availabilitydropdown from "./adminDrop"
 function Adminbook({ user }) {
   const [bookData, setBookData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
+  const navigate = useNavigate();
 
   const toggleImage = async (bookId, currentStatus) => {
     const token = window.localStorage.getItem("access_token");
@@ -40,6 +42,7 @@ function Adminbook({ user }) {
       });
   };
 
+
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
@@ -48,7 +51,7 @@ function Adminbook({ user }) {
           Authorization: `Bearer ${token}`
         },
         params: {
-          user: user !== "" ? user : undefined, // Pass the user email address as a query parameter
+          user: user !== "" ? user : undefined,
         },
       })
       .then((response) => {
@@ -56,10 +59,14 @@ function Adminbook({ user }) {
         setBookData(book);
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response && error.response.status === 403) {
+          navigate("/error")
+        } else {
+          console.log(error)
+        }
       });
 
-  }, [refreshData, user]);
+  }, [refreshData, user, navigate]);
 
   return (
     <div>
@@ -82,8 +89,8 @@ function Adminbook({ user }) {
             <p>{book.status}</p>
             <div className="availableimg">
               <FontAwesomeIcon
-                icon = {faCircleCheck}
-                color = {"#628B48"}
+                icon = {book.status === "collected" ? faBoxArchive : faReceipt}
+                color = {book.status === "collected" ? "#F4F4F2" : "#320E3B"}
                 size = "5x"
               />
             </div>

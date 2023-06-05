@@ -30,7 +30,7 @@ class Token(BaseModel):
 
 class TokenData(BaseModel):
     username: Union[str, None] = None
-    is_admin: bool
+    is_admin: Union[bool, None] = None
 
 class User(BaseModel):
     username: str
@@ -38,7 +38,6 @@ class User(BaseModel):
     email: Union[str, None] = None
     password:  Union[str, None] = None
     disabled: Union[bool, None] = None
-    is_admin: bool = False
 
 class UserInDB(User):
     hashed_password: str
@@ -58,7 +57,6 @@ class Admin(BaseModel):
     email: Union[str, None] = None
     password:  Union[str, None] = None
     disabled: Union[bool, None] = None
-    is_admin: bool = True
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -87,20 +85,17 @@ def get_user(username: str):
     for i in range(len(db)):
         if username == db[i][2]:
             db[i] += (0,)
-            print(db[i])
             return db[i]
     return False
 
 def get_admin(username: str):
     cursor.execute("select * from Admin")
     db = cursor.fetchall()
-
     for i in range(len(db)):
         if username == db[i][2]:
             db[i] += (1,)
             return db[i]
     return False
-
 
 # only return available books from book table
 def get_available_books():
@@ -273,12 +268,14 @@ def authenticate_user(username: str, password: str):
     user = cursor.fetchall()
     for i in range(len(user)):
         if username == user[i][2] and verify_password(password, user[i][3]):
-            return username
+            is_admin = user[i] + (0,)
+            return username, is_admin[5]
     cursor.execute("SELECT * FROM Admin")
     admin = cursor.fetchall()
     for i in range(len(admin)):
         if username == admin[i][2] and verify_password(password, admin[i][3]):
-            return username
+            is_admin = admin[i] + (1,)
+            return username, is_admin[5]
     return False
 
 # return logged in user fullname
@@ -335,7 +332,7 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
         token_data = TokenData(username=username, is_admin=is_admin)
     except JWTError:
         raise credentials_exception
-    
+
     # Check if the user is a regular user or an admin
     if token_data.is_admin:
         admin = get_admin(username=token_data.username)
@@ -351,11 +348,12 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
 async def get_current_active_user(
     current_user: Annotated[User, Depends(get_current_user)]
 ):
-    if current_user[0][4] == 1:
-        raise HTTPException(status_code=400, detail="Inactive user")
+    if current_user:
+        if current_user[4] == 1:
+            raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-async def is_admin_user(current_user: Admin = Depends(get_current_user)):
+async def is_admin_user(current_user: Annotated[Admin, Depends(get_current_user)]):
     return current_user
 
 # @app.post("/token", response_model=Token)
@@ -379,7 +377,7 @@ async def is_admin_user(current_user: Admin = Depends(get_current_user)):
 async def login_for_access_token(
     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
 ):
-    user = authenticate_user(form_data.username, form_data.password)
+    user, is_admin = authenticate_user(form_data.username, form_data.password)
     if not user:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -387,7 +385,10 @@ async def login_for_access_token(
             headers={"WWW-Authenticate": "Bearer"},
         )
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-    is_admin = isinstance(user, Admin)
+    if is_admin == 1:
+        is_admin = True
+    else:
+        is_admin = False
     access_token = create_access_token(
         data={
             "sub": user,
@@ -425,8 +426,7 @@ async def get_borrowed_book_handler(
     current_user: Annotated[Admin, Depends(is_admin_user)],
     user: Optional[str] = None
 ):
-    # print(current_user)
-    if not current_user.is_admin and user != current_user.email:
+    if not current_user[5] == 1:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="You are not authorized to access this resource",
@@ -450,7 +450,15 @@ def display_book():
     return books[0][3]
 
 @app.post("/addBook")
-async def add_book_to_database(id: int, title: str, author: str, file: str):
+async def add_book_to_database(
+    id: int, title: str, author: str, file: str,
+    current_user: Annotated[Admin, Depends(is_admin_user)]
+):
+    if not current_user[5] == 1:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="You are not authorized to access this resource",
+        )
     insert_book_details(id, title, author, file)
     return "submitted"
 
@@ -498,3 +506,8 @@ async def search_user(search: Optional[str] = None):
         return get_books()
     else:
         return get_books_search(search)
+    
+@app.get("/checkAdmin")
+async def check_admin(current_user: TokenData = Depends(get_current_user)):
+    print(current_user)
+    # return {"is_admin": current_user.is_admin}

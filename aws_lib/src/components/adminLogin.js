@@ -33,7 +33,7 @@ function Admin(){
                 window.localStorage.setItem("access_token", response.data.access_token)
                 console.log(response.data.access_token)
             //   setValid(1)
-                navigate("/dashboard")
+                navigate("/adminPage")
             })
             .catch(function(error) {
               console.log(error);
