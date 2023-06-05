@@ -111,6 +111,34 @@ def get_books():
         })
     return book_details
 
+def get_books_search(search: str):
+    query = "SELECT * FROM Book WHERE title LIKE %s AND status = 'available'"
+    word = "%"+search+"%"
+    cursor.execute(query, (word, ))
+    books = cursor.fetchall()
+    book_details = []
+    if len(books) > 0:
+        for book in books:
+            book_id, title, author, image, status = book
+            book_details.append({ 
+                "id": book_id,
+                "title": title,
+                "author": author,
+                "image": image,
+                "status": status
+            })
+        return book_details
+    else:
+        book_details.append({ 
+                "id": 0,
+                "title": "No available books with that word",
+                "author": "N/A",
+                "image": "https://img.freepik.com/free-vector/blank-book-cover-vector-illustration-gradient-mesh-isolated-object-design-branding_587448-952.jpg?w=2000",
+                "status": "unavailable"
+            })
+        return book_details
+
+
 # get books from user, based on that one user
 def get_books_from_user(user: str):
     cursor.execute("SELECT u.fullname, bo.uid, bo.bookID, b.title, b.image, bo.borrow_date, bo.due_date, bo.status FROM Borrow bo JOIN Book b ON bo.bookID = b.bookID JOIN User u ON bo.uid = u.email WHERE uid = %s", (user,))
@@ -314,8 +342,11 @@ async def read_own_items(
     return [{"item_id": "Foo", "owner": current_user}]
 
 @app.get("/availableBooks")
-async def get_available_books_handler():
-    return get_available_books()
+async def get_available_books_handler(search: Optional[str] = None):
+    if search is None:
+        return get_available_books()
+    else:
+            return get_books_search(search)
 
 @app.get("/books")
 async def get_books_handler():
@@ -445,12 +476,16 @@ async def book_list(
     return get_books_from_user(user)
 
 @app.get("/searchBook")
-async def search_user(search: str):
-    query = ("SELECT * from Book WHERE title LIKE %s AND status = 'available'")
-    word = "%"+search+"%"
-    cursor.execute(query, (word, ))
-    books = cursor.fetchall()
-    if len(books) == 0:
-        return "no books with that title"
+async def search_user(search: Optional[str] = None):
+    # query = ("SELECT * from Book WHERE title LIKE %s AND status = 'available'")
+    # word = "%"+search+"%"
+    # cursor.execute(query, (word, ))
+    # books = cursor.fetchall()
+    # if len(books) == 0:
+    #     return "no books with that title"
+    # else:
+    #     return books
+    if search is None:
+        return get_books()
     else:
-        return books
+        return get_books_search(search)

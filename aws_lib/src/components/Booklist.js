@@ -6,7 +6,7 @@ import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 
 
-function BookList({ id, title, author, completed }) {
+function BookList({ word }) {
   const [bookData, setBookData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
 
@@ -45,17 +45,21 @@ function BookList({ id, title, author, completed }) {
       .get("http://localhost:8000/availableBooks/", {
         headers: {
           Authorization: `Bearer ${token}`
-        }
+        },
+        params: {
+          search : word !== "" ? word : undefined,
+        },
       })
       .then((response) => {
         const book = response.data;
+        console.log(book)
         setBookData(book);
       })
       .catch((error) => {
         console.log(error);
       })
 
-  }, [refreshData]);
+  }, [refreshData, word]);
 
   return (
     <div>

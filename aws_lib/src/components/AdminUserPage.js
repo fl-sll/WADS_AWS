@@ -54,7 +54,6 @@ function Adminbook({ user }) {
       .then((response) => {
         const book = response.data;
         setBookData(book);
-        // console.log(book)
       })
       .catch((error) => {
         console.log(error);
