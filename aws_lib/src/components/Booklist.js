@@ -44,20 +44,15 @@ function BookList({ word }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-    .get('https://aws-wads-o7f3eoioba-an.a.run.app/availableBooks?search=1', {
-      headers:{
-        'Accept': 'application/json'
-      }
-    })
-      // .get(BACKEND_LINK + "/availableBooks/", {
-        // headers: {
-          // Authorization: `Bearer ${token}`
-        // },
-        // withCredentials: false,
-        // params: {
-        //   search : word !== "" ? word : undefined,
-        // },
-  // })
+      .get(BACKEND_LINK + "/availableBooks/", {
+        headers: {
+          Authorization: `Bearer ${token}`
+        },
+        withCredentials: false,
+        params: {
+          search : word !== "" ? word : undefined,
+        },
+      })
       .then((response) => {
         const book = response.data;
         console.log(book)
