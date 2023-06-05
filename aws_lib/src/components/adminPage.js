@@ -1,12 +1,32 @@
-import React from "react";
+import React, { useEffect} from "react";
 import Navbar from "./navbar";
-import Footer from "./footer";
-import { Link } from "react-router-dom";
+import { Link , useNavigate } from "react-router-dom";
 import "../styles/adminPage.css"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUserCheck, faBook} from '@fortawesome/free-solid-svg-icons'
+import axios from "axios";
 
 function AdminPage(){
+    const navigate = useNavigate();
+
+    
+    useEffect(() => {
+        const token = window.localStorage.getItem("access_token");
+        axios
+          .get(`http://localhost:8000/checkAdmin/`, {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+          .catch((error) => {
+            if (error.response && error.response.status === 403) {
+              navigate("/error")
+            } else {
+              console.log(error)
+            }
+        });
+    }, [navigate]);
+
     return(
         <div>
             <Navbar page="/adminPage"></Navbar>

@@ -5,13 +5,7 @@
     display: flex;
     box-sizing: border-box;
     border-radius: 10px;
-    border-left: 5px solid #F5EDDC;
     box-shadow: 0 6px 18px -9px hsl(210, 15%, 65%);
-  }
-
-  .bookList--borderColor{
-    border-color: rgb(0, 109, 0);
-    box-shadow: 0 6px 18px -9px rgb(68, 68, 68);
   }
 
   .bookList__body {

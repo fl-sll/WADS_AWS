@@ -9,6 +9,7 @@ from pydantic import BaseModel
 from typing_extensions import Annotated
 from fastapi.middleware.cors import CORSMiddleware
 import mysql.connector
+from pydantic import ValidationError
 
 conn = mysql.connector.connect(
     host="35.238.148.78",
@@ -294,7 +295,6 @@ def get_user_full_name(username: str):
     else:
         return None
 
-
 def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None):
     to_encode = data.copy()
     if expires_delta:
@@ -304,25 +304,6 @@ def create_access_token(data: dict, expires_delta: Union[timedelta, None] = None
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
     return encoded_jwt
-
-# async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
-#     credentials_exception = HTTPException(
-#         status_code=status.HTTP_401_UNAUTHORIZED,
-#         detail="Could not validate credentials",
-#         headers={"WWW-Authenticate": "Bearer"},
-#     )
-#     try:
-#         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
-#         username: str = payload.get("sub")
-#         if username is None:
-#             raise credentials_exception
-#         token_data = TokenData(username=username)
-#     except JWTError:
-#         raise credentials_exception
-#     user = get_user(username=token_data.username)
-#     if user is None:
-#         raise credentials_exception
-#     return user
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     credentials_exception = HTTPException(
@@ -340,7 +321,6 @@ async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]):
     except JWTError:
         raise credentials_exception
 
-    # Check if the user is a regular user or an admin
     if token_data.is_admin:
         admin = get_admin(username=token_data.username)
         if admin is None:
@@ -362,23 +342,6 @@ async def get_current_active_user(
 
 async def is_admin_user(current_user: Annotated[Admin, Depends(get_current_user)]):
     return current_user
-
-# @app.post("/token", response_model=Token)
-# async def login_for_access_token(
-#     form_data: Annotated[OAuth2PasswordRequestForm, Depends()]
-# ):
-#     user = authenticate_user(form_data.username, form_data.password)
-#     if not user:
-#         raise HTTPException(
-#             status_code=status.HTTP_401_UNAUTHORIZED,
-#             detail="Incorrect username or password",
-#             headers={"WWW-Authenticate": "Bearer"},
-#         )
-#     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
-#     access_token = create_access_token(
-#         data={"sub": user}, expires_delta=access_token_expires
-#     )
-#     return {"access_token": access_token, "token_type": "bearer"}
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(
@@ -430,18 +393,26 @@ async def get_books_handler():
 
 @app.get("/borrowedBooks")
 async def get_borrowed_book_handler(
-    current_user: Annotated[Admin, Depends(is_admin_user)],
+    token: str = Depends(oauth2_scheme),
     user: Optional[str] = None
 ):
-    if not current_user[5] == 1:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        is_admin: bool = payload.get("is_admin")
+        if not is_admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not authorized to access this resource",
+            )
+        if user is None:
+            return get_borrowed_books()
+        else:
+            return get_books_from_user(user)
+    except (JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You are not authorized to access this resource",
+            detail="Invalid token",
         )
-    if user is None:
-        return get_borrowed_books()
-    else:
-        return get_books_from_user(user)
 
 @app.get("/displayBook")
 def display_book():
@@ -451,26 +422,28 @@ def display_book():
 
 @app.post("/addBook/{id}")
 async def add_book_to_database(
-    current_user: Annotated[Admin, Depends(is_admin_user)],
-    book: Book
+    book: Book,
+    token: str = Depends(oauth2_scheme)
 ):
-    if not current_user[5] == 1:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        is_admin: bool = payload.get("is_admin")
+        if not is_admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not authorized to access this resource",
+            )
+        id = book.id
+        title = book.title
+        author = book.author
+        link = book.link
+        insert_book_details(id, title, author, link)
+        return "submitted"
+    except (JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You are not authorized to access this resource",
+            detail="Invalid token",
         )
-    id = book.id
-    title = book.title
-    author = book.author
-    link = book.link
-    insert_book_details(id, title, author, link)
-    return "submitted"
-
-# @app.get("/display")
-# async def display_image():
-#     cursor.execute("SElECT * FROM Books;")
-#     book = cursor.fetchall()
-#     return book
 
 @app.put("/books/{book_id}")
 async def borrow_book_status_handler(
@@ -513,11 +486,19 @@ async def search_user(search: Optional[str] = None):
     
 @app.get("/checkAdmin")
 async def check_admin(
-    current_user: Annotated[Admin, Depends(is_admin_user)]
+    token: str = Depends(oauth2_scheme),
 ):
-    if not current_user[5] == 1:
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        is_admin: bool = payload.get("is_admin")
+        if not is_admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not authorized to access this resource",
+            )
+        return {"Approved": "Access granted"}
+    except (JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail="You are not authorized to access this resource",
+            detail="Invalid token",
         )
-    return {"Approved": "Access granted"}
