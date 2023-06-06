@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faReceipt, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
+import { BACKEND_LINK } from "./Const";
 
 
 function UserBook({ id, title, author, completed }) {
@@ -15,7 +16,7 @@ function UserBook({ id, title, author, completed }) {
 
     axios
       .get(
-        `http://localhost:8000/bookList/me`,
+        `${BACKEND_LINK}/bookList/me`,
         { status: updatedStatus },
         {
           headers: {
@@ -38,7 +39,7 @@ function UserBook({ id, title, author, completed }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get("http://localhost:8000/bookList/me", {
+      .get(BACKEND_LINK + "/bookList/me", {
         headers: {
           Authorization: `Bearer ${token}`
         }
@@ -61,7 +62,7 @@ function UserBook({ id, title, author, completed }) {
             <div>
               <img src={book.image} alt={book.title} className="bookimg"/>
             </div>
-            <div class="UserContents">
+            <div className="UserContents">
               <h2>{book.title}</h2>
               <p>Borrowed: {book.borrow_date}</p>
               <p>Due Date: {book.due_date}</p>

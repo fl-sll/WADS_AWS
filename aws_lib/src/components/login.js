@@ -5,6 +5,7 @@ import logo from "../assets/logo.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUser, faLock} from '@fortawesome/free-solid-svg-icons'
 import axios from "axios"
+import { BACKEND_LINK } from "./Const";
 
 
 function Login(){
@@ -22,7 +23,7 @@ function Login(){
         }
     
         axios
-            .post("http://127.0.0.1:8000/token", data,  {
+            .post(BACKEND_LINK + "/token", data,  {
                 headers:{
                     "accept" : "application/json",
                     "Content-Type": "application/x-www-form-urlencoded"

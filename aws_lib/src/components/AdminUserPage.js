@@ -6,7 +6,7 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faReceipt, faBoxArchive } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 import Availabilitydropdown from "./adminDrop"
-
+import { BACKEND_LINK } from "./Const";
 
 function Adminbook({ user }) {
   const [bookData, setBookData] = useState([]);
@@ -19,7 +19,7 @@ function Adminbook({ user }) {
 
     axios
       .put(
-        `http://localhost:8000/updateBook/${bookId}`,
+        `${BACKEND_LINK}/updateBook/${bookId}`,
         { status: currentStatus },
         {
           headers: {
@@ -46,7 +46,7 @@ function Adminbook({ user }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get(`http://localhost:8000/borrowedBooks/`, {
+      .get(`${BACKEND_LINK}/borrowedBooks/`, {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -76,7 +76,7 @@ function Adminbook({ user }) {
             <div>
               <img src={book.image} alt={book.title} className="bookimg"/>
             </div>
-            <div class="UserContents">
+            <div className="UserContents">
               <h2>{book.title}</h2>
               <p>Borrowed: {book.borrow_date}</p>
               <p>Due Date: {book.due_date}</p>
