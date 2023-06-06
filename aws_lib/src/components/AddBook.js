@@ -72,7 +72,7 @@ function AddBook() {
         {valid === false && (
           <p className="warning">Error, the book is not added to the database :(</p>
         )}
-        <form onSubmit={handleSubmit} className="container">
+        <form onSubmit={handleSubmit} className="containerfull">
             <div className="containerLeft">
                 <div className="inputContainer">
                     <h4>Book ID:</h4>
