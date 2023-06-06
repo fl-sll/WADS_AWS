@@ -7,32 +7,29 @@ import axios from 'axios';
 import { BACKEND_LINK } from "./Const";
 
 
-function UserBook({ id, title, author, completed }) {
+function UserBook() {
   const [bookData, setBookData] = useState([]);
+  const [refreshData, setRefreshData] = useState(false);
 
-  const toggleImage = async (bookId, currentStatus) => {
-    const updatedStatus = currentStatus === "available" ? "unavailable" : "available";
+  const toggleImage = async (bookId) => {
     const token = window.localStorage.getItem("access_token");
 
     axios
-      .get(
-        `${BACKEND_LINK}/bookList/me`,
-        { status: updatedStatus },
-        {
+      .put(
+        `${BACKEND_LINK}/cancelBook/${bookId}`, 
+        { bookId },{
           headers: {
             Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then(() => {
-        setBookData((prevBookData) =>
-          prevBookData.map((book) =>
-            book.id === bookId ? { ...book, status: updatedStatus } : book
-          )
-        );
+          }
+        })
+      .then((response) => {
+        console.log(response)
       })
       .catch((error) => {
         console.log(error);
+      })
+      .finally(() => {
+        setRefreshData(prevValue => !prevValue);
       });
   };
 
@@ -52,7 +49,7 @@ function UserBook({ id, title, author, completed }) {
         console.log(error);
       });
 
-  }, []);
+  }, [refreshData]);
 
   return (
     <div>

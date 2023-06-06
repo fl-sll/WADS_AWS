@@ -252,12 +252,14 @@ def add_borrow_list(book_id: int, uid: str):
     )
     conn.commit()
 
-def add_borrow_list(book_id: int, uid: str):
-    today = date.today()
-    due = date.today() + timedelta(days=3)
+def remove_borrow(book_id: int, uid: str):
     cursor.execute(
-        "INSERT INTO Borrow VALUES (%s, %s, %s, %s, %s)",
-        (uid, book_id, today, due, "ordered")
+        "DELETE FROM Borrow WHERE bookID = %s AND uid = %s",
+        (book_id, uid)
+    )
+    cursor.execute(
+        "UPDATE Book SET status = 'available' WHERE bookID = %s",
+        (book_id,)
     )
     conn.commit()
 
@@ -367,7 +369,7 @@ async def login_for_access_token(
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
-@app.get("/users/me/")
+@app.get("/users/me")
 async def read_users_me(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
@@ -455,6 +457,16 @@ async def borrow_book_status_handler(
     update_book_status(book_id, request_body.status)
     return {"message": "Book status updated successfully"}
 
+@app.put("/cancelBook/{book_id}")
+async def cancel_book_status_handler(
+    book_id: int,
+    current_user: Annotated[User, Depends(get_current_active_user)]
+):
+    print(current_user)
+    user = current_user[2]
+    remove_borrow(book_id, user)
+    return {"message": "Order cancelled successfully"}
+
 @app.put("/updateBook/{book_id}")
 async def update_book_status_handler(
     book_id: int,
@@ -468,7 +480,7 @@ async def update_book_status_handler(
         return {"error": "Book status mismatch"}
     return {"message": "Book status updated successfully"}
 
-@app.get("/bookList/me/")
+@app.get("/bookList/me")
 async def book_list(
     current_user: Annotated[User, Depends(get_current_active_user)]
 ):
@@ -500,3 +512,4 @@ async def check_admin(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Invalid token",
         )
+    

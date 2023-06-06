@@ -32,8 +32,6 @@ function Login(){
     
             .then((response) => {
                 window.localStorage.setItem("access_token", response.data.access_token)
-                console.log(response.data.access_token)
-            //   setValid(1)
                 navigate("/dashboard")
             })
             .catch(function(error) {
