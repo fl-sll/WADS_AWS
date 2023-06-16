@@ -91,7 +91,7 @@ def get_user(username: str):
 
     for i in range(len(db)):
         if username == db[i][2]:
-            db[i] += (0,)
+            # db[i] += (0,)
             return db[i]
     return False
 
@@ -100,7 +100,7 @@ def get_admin(username: str):
     db = cursor.fetchall()
     for i in range(len(db)):
         if username == db[i][2]:
-            db[i] += (1,)
+            # db[i] += (1,)
             return db[i]
     return False
 
@@ -341,8 +341,8 @@ async def get_current_active_user(
             raise HTTPException(status_code=400, detail="Inactive user")
     return current_user
 
-async def is_admin_user(current_user: Annotated[Admin, Depends(get_current_user)]):
-    return current_user
+# async def is_admin_user(current_user: Annotated[Admin, Depends(get_current_user)]):
+#     return current_user
 
 @app.post("/token", response_model=Token)
 async def login_for_access_token(
