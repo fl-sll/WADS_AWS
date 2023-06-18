@@ -5,10 +5,15 @@ import BookList from "./Booklist"
 import Under from './under';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
+import { useLocation } from "react-router-dom";
 
 function Bookpage(){
     const [searchValue, setSearchValue] = useState("");
-    const [search, setSearch] = useState("");
+    const location = useLocation();
+    const [search, setSearch] = useState(location.state);
+    // const location = useLocation();
+    // setSearch(location.state)
+    console.log(location.state)
 
     const handleSubmit = (e) => {
         e.preventDefault();

@@ -27,6 +27,7 @@ function BookList({ word }) {
         }
       )
       .then(() => {
+        console.log(word)
         setBookData((prevBookData) =>
           prevBookData.map((book) =>
             book.id === bookId ? { ...book, status: updatedStatus } : book
@@ -44,7 +45,7 @@ function BookList({ word }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get(BACKEND_LINK + "/availableBooks/", {
+      .get(BACKEND_LINK + "/availableBooks", {
         headers: {
           Authorization: `Bearer ${token}`
         },
@@ -56,6 +57,7 @@ function BookList({ word }) {
       .then((response) => {
         const book = response.data;
         console.log(book)
+        console.log(word)
         setBookData(book);
       })
       .catch((error) => {

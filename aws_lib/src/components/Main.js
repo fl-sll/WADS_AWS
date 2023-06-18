@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react'
+import React, {useState } from 'react'
 import "../styles/Main.css"
 import bookBtn from "../assets/BookBtn.png"
-import {Link} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faNewspaper, faMarker, faMagnifyingGlass} from '@fortawesome/free-solid-svg-icons'
 import Carousel from "./Carousel"
@@ -11,6 +11,7 @@ import { BACKEND_LINK } from "./Const";
 
 function Main(){
     const [searchWord, setSearchWord] = useState("")
+    const navigate = useNavigate();
     const slides = [
         {url:"https://riba-prd-assets.azureedge.net/-/media/Riba/Images/Block-Images/Reading-room-promo-image.jpg?rev=1e9d0af0e7dd43308ecb60e34a9b86bc&h=613&w=956&la=en&hash=83F6A6C9CA46CB126B07868125880AA5", title: 'library1'},
         {url:"https://assets.weforum.org/article/image/JMF96ETfn1kSViVnUou1Z0XIDwWcPpT5mrPc7-ytpAc.jpg", title: 'library2'},
@@ -24,8 +25,8 @@ function Main(){
         .get(`${BACKEND_LINK}/searchBook?search=${searchWord}`)
 
         .then((response) => {
-            console.log(response)
-            
+            // console.log(searchWord)
+            navigate("/bookpage", {state: searchWord})
         })
 
     }
