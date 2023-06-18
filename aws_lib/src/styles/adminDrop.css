@@ -8,23 +8,31 @@ details{
     margin-bottom: 10px;
 }
 
+/* 5A7D62
+C57979
+B99E3E
+EAEAEA */
 summary{
-    padding-bottom: 10px;
-    color:rgb(0, 0, 0);
+    padding: 10px;
+    background-color: #F8B21A;
+    /* border: 2px solid #F8B21A; */
+    border-radius: 5px;
+    color: white;
+}
+summary:hover{
+    background-color: #F8B21A;
 }
 
 .dropdown-menus li {
-    background: #383838;
+    background: white;
     cursor: pointer;
     text-decoration: none;
     padding: 10px;
-    color:rgb(225, 223, 223);
+    color:#F8B21A;
+    /* border: 2px solid black; */
+    /* border-radius: 5px; */
 }
 
 .dropdown-menus li:hover {
-    background: rgb(131, 131, 131);
+    background: #ffefcd;
 }
-
-/* .dropdown-menus.clicked {
-    display: none;
-} */

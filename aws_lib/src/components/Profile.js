@@ -6,7 +6,7 @@ import UserBook from './UserBook';
 function Profile(){
     return(
         <div>
-            <Navbar page="/dashboard"></Navbar>
+            <Navbar page="/dashboard" admin="False"></Navbar>
             <Under></Under>
             <UserBook></UserBook>
             <Footer></Footer>

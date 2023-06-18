@@ -30,7 +30,7 @@ function AdminPage(){
 
     return(
         <div>
-            <Navbar page="/adminPage"></Navbar>
+            <Navbar page="/adminPage" admin="True"></Navbar>
             <div className="adminContainer">
                 <h1 className="adminName">Welcome to Admin Page</h1>
                 <div className="buttonContainer">

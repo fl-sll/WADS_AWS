@@ -16,7 +16,7 @@ function CheckOrder() {
 
   return (
     <div>
-      <Navbar page="/adminPage" />
+      <Navbar page="/adminPage" admin="True"/>
       <form className="adminSearchBar" onSubmit={handleSubmit}>
         <input
           type="text"

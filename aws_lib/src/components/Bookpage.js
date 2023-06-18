@@ -17,7 +17,7 @@ function Bookpage(){
     
     return(
         <div>
-            <Navbar page="/dashboard"></Navbar>
+      <Navbar page="/dashboard" admin="False"></Navbar>
             <Under></Under>
             <form onSubmit={handleSubmit} className='searchBar'>
                 <p>Search our collections</p>

@@ -43,6 +43,7 @@ function Login(){
         <div className="login"> 
             <form onSubmit={handleSubmit} className="loginContainer">
                 <img src={logo} alt="" className="logo"></img>
+                {/* <p className="loginDesc">User Login Page</p> */}
                 <div className="formContainer">
                     <FontAwesomeIcon icon={faUser} color="black" className="symbol"></FontAwesomeIcon>
                     <input type="text" className="login_textBox" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email"></input>

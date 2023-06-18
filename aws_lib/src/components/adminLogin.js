@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../styles/login.css"
 import {Link, useNavigate} from "react-router-dom";
-import logo from "../assets/logo.png"
+import logo from "../assets/adminLogo.png"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faUser, faLock} from '@fortawesome/free-solid-svg-icons'
 import axios from "axios"
@@ -45,9 +45,10 @@ function Admin(){
         <div className="login"> 
             <form onSubmit={handleSubmit} className="loginContainer">
                 <img src={logo} alt="" className="logo"></img>
+                {/* <p className="loginDesc">Admin Login Page</p> */}
                 <div className="formContainer">
                     <FontAwesomeIcon icon={faUser} color="black" className="symbol"></FontAwesomeIcon>
-                    <input type="text" className="login_textBox" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email"></input>
+                    <input type="text" className="login_textBox" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Admin Email"></input>
                 </div>
                 <div className="formContainer">
                     <FontAwesomeIcon icon={faLock} color="black" className="symbol"></FontAwesomeIcon>

@@ -65,7 +65,7 @@ function AddBook() {
 
   return (
     <div>
-      <Navbar page="/adminPage"></Navbar>
+      <Navbar page="/adminPage" admin="True"></Navbar>
       <div className="addContainer">
         <h1>Add Book</h1>
         {valid === true && (

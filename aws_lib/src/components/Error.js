@@ -6,7 +6,7 @@ import "../styles/error.css"
 function Error(){
     return(
         <div>
-            <Navbar page="/dashboard"></Navbar>
+      <Navbar page="/dashboard" admin="False"></Navbar>
             <Under></Under>
             
             <div className="error-message">

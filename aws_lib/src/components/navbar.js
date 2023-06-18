@@ -1,5 +1,6 @@
 import React, { useState , useEffect, useRef} from 'react'
 import logo from "../assets/logo.png"
+import adminLogo from "../assets/adminLogo.png"
 import "../styles/navbar.css"
 import {Link, useNavigate} from "react-router-dom";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
@@ -8,7 +9,7 @@ import { useOnHoverOutside } from "./../hooks/Hover";
 // import axios from 'axios';
 import Navdropdown from "./NavbarDropdown";
 
-function Navbar({page}){
+function Navbar({page, admin}){
     // const[name, setName] = useState("");
     // const navigate = useNavigate();
     const dropdownRef = useRef(null); // Create a reference for dropdown container
@@ -40,9 +41,18 @@ function Navbar({page}){
     return(
         <div>
             <div className='top'>
-                <Link to={page}>
+                {admin === "True" ?
+                    <Link to={page}>
+                        <img src={adminLogo} alt="" className='logo'></img>
+                    </Link>
+                    :
+                    <Link to={page}>
+                        <img src={logo} alt="" className='logo'></img>
+                    </Link>
+                }
+                {/* <Link to={page}>
                     <img src={logo} alt="" className='logo'></img>
-                </Link>
+                </Link> */}
                 <ul>
                     <li
                         className='nav-item'

@@ -17,7 +17,7 @@ function SearchBooks(){
 
     return(
         <div>
-            <Navbar page="/dashboard"></Navbar>
+            <Navbar page="/dashboard" admin="False"></Navbar>
             <form className='searchBar' onSubmit={handleSubmit}>
                 <input type='text' placeholder='Search username' id='searchInput'></input>
                 <button type="submit" className='searchBtn'>
