@@ -1,15 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Geologica:wght@600&display=swap');
-.adminContainer{
+/* .adminContainer{
     background-color: #E6E6E6;
-    border-radius: 45px;
+    border-radius: 30px;
     display: flex;
     flex-direction: column;
     align-items: center;
     max-width: 800px;
     margin: 40px auto;
-    /* margin-top: 40px; */
-    height: 450px;
-}
+    height: 650px;
+} */
 
 .adminName{
     font-family: 'Geologica', sans-serif;
@@ -69,4 +68,16 @@
 
 .searchBtn:hover{
     cursor: pointer;
+}
+
+#addBookBtn{
+    background-color: #C47A79;
+}
+
+#checkBtn{
+    background-color: #B99E3D;
+}
+
+#databaseBtn{
+    background-color: #5A7D62;
 }

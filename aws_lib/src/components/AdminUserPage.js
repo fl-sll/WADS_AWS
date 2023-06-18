@@ -46,7 +46,7 @@ function Adminbook({ user }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get(`${BACKEND_LINK}/borrowedBooks/`, {
+      .get(`${BACKEND_LINK}/borrowedBooks`, {
         headers: {
           Authorization: `Bearer ${token}`
         },

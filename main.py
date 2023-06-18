@@ -136,6 +136,34 @@ def get_books():
         })
     return book_details
 
+# get books from book table
+def get_all_books_search(search: str):
+    query = "SELECT * FROM Book where title LIKE %s"
+    word = "%"+search+"%"
+    cursor.execute(query, (word,))
+    books = cursor.fetchall()
+    book_details = []
+    if len(books) > 0:
+        for book in books:
+            book_id, title, author, image, status = book
+            book_details.append({ 
+                "id": book_id,
+                "title": title,
+                "author": author,
+                "image": image,
+                "status": status
+            })
+        return book_details
+    else:
+        book_details.append({ 
+                "id": 0,
+                "title": "No available books with that word",
+                "author": "N/A",
+                "image": "https://img.freepik.com/free-vector/blank-book-cover-vector-illustration-gradient-mesh-isolated-object-design-branding_587448-952.jpg?w=2000",
+                "status": "unavailable"
+            })
+        return book_details
+
 def get_books_search(search: str):
     query = "SELECT * FROM Book WHERE title LIKE %s AND status = 'available'"
     word = "%"+search+"%"
@@ -389,8 +417,11 @@ async def get_available_books_handler(search: Optional[str] = None):
         return get_books_search(search)
 
 @app.get("/books")
-async def get_books_handler():
-    return get_books()
+async def get_books_handler(search: Optional[str] = None):
+    if search is None:
+        return get_books()
+    else:
+        return get_all_books_search(search)
 
 @app.get("/borrowedBooks")
 async def get_borrowed_book_handler(

@@ -11,9 +11,6 @@ function Bookpage(){
     const [searchValue, setSearchValue] = useState("");
     const location = useLocation();
     const [search, setSearch] = useState(location.state);
-    // const location = useLocation();
-    // setSearch(location.state)
-    console.log(location.state)
 
     const handleSubmit = (e) => {
         e.preventDefault();

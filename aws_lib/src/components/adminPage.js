@@ -3,7 +3,7 @@ import Navbar from "./navbar";
 import { Link , useNavigate } from "react-router-dom";
 import "../styles/adminPage.css"
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
-import {faUserCheck, faBook} from '@fortawesome/free-solid-svg-icons'
+import {faUserCheck, faBook, faDatabase} from '@fortawesome/free-solid-svg-icons'
 import axios from "axios";
 import { BACKEND_LINK } from "./Const";
 
@@ -14,7 +14,7 @@ function AdminPage(){
     useEffect(() => {
         const token = window.localStorage.getItem("access_token");
         axios
-          .get(`${BACKEND_LINK}/checkAdmin/`, {
+          .get(`${BACKEND_LINK}/checkAdmin`, {
             headers: {
               Authorization: `Bearer ${token}`
             }
@@ -35,7 +35,7 @@ function AdminPage(){
                 <h1 className="adminName">Welcome to Admin Page</h1>
                 <div className="buttonContainer">
                     <Link style={{ textDecoration: 'none' }} to="/addBook">
-                        <div className="adminPageBtn">
+                        <div className="adminPageBtn" id="addBookBtn">
                             <div className='textContainer'>
                                 <h2>Add Book</h2>
                                 <p>Enter book details and add to database</p>
@@ -45,12 +45,21 @@ function AdminPage(){
                         </div>
                     </Link >
                     <Link style={{ textDecoration: 'none' }} to="/checkOrder">
-                        <div className="adminPageBtn">
+                        <div className="adminPageBtn" id="checkBtn">
                             <div className='textContainer'>
                                 <h2>Check Student Order</h2>
                                 <p>Check order and resolve transactions</p>
                             </div>
                             <FontAwesomeIcon icon={faUserCheck} size='4x'/>
+                        </div>
+                    </Link>
+                    <Link style={{ textDecoration: 'none' }} to="/database">
+                        <div className="adminPageBtn" id="databaseBtn">
+                            <div className='textContainer'>
+                                <h2>Book Database</h2>
+                                <p>View, Edit, Delete book in database</p>
+                            </div>
+                            <FontAwesomeIcon icon={faDatabase} size='4x'/>
                         </div>
                     </Link>
                 </div>

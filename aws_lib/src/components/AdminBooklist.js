@@ -1,4 +1,4 @@
-import "../styles/Booklist.css";
+import "../styles/BookDB.css";
 import React, { useState, useEffect } from "react";
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
@@ -6,7 +6,7 @@ import axios from 'axios';
 import { BACKEND_LINK } from "./Const";
 
 
-function BookList({ word }) {
+function AdminBooklist({ word }) {
   const [bookData, setBookData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
 
@@ -44,9 +44,9 @@ function BookList({ word }) {
   useEffect(() => {
     const token = window.localStorage.getItem("access_token");
     axios
-      .get(BACKEND_LINK + "/availableBooks", {
+      .get(BACKEND_LINK + "/books", {
         headers: {
-          Authorization: `Bearer ${token}`
+          "accept" : "application/json"
         },
         withCredentials: false,
         params: {
@@ -87,9 +87,15 @@ function BookList({ word }) {
                 size = "5x"
               />
             </div>
-            <button className="button-17" onClick={() => toggleImage(book.id, book.status)}>
-              Borrow
-            </button>
+            <div>
+              <button className="databaseBtn" id="editBtn">
+                Edit
+              </button>
+              <button className="databaseBtn" id="delBtn">
+                Delete
+              </button>
+            </div>
+            
           </div>
         </div>
       ))}
@@ -97,4 +103,4 @@ function BookList({ word }) {
   );
 }
 
-export default BookList;
+export default AdminBooklist;

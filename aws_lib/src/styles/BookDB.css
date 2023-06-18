@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Geologica:wght@600&display=swap');
+
+.databaseBtn{
+    border: 0px;
+    border-radius: 20px;
+    padding: 10px;
+    margin: 5px;
+    width: 100px;
+    font-family: 'Geologica', sans-serif;
+    color: white;
+}
+
+#editBtn{
+    background-color: #ffae00;
+}
+
+#editBtn:hover{
+    background-color: #ffc23d;
+}
+
+#delBtn{
+    background-color: #ca514f;
+}
+
+#delBtn:hover{
+    background-color: #ea6967;
+}
