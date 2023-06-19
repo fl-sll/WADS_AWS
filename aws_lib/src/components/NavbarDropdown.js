@@ -3,6 +3,8 @@ import "../styles/Dropdown.css"
 import {Link, useNavigate} from "react-router-dom";
 import axios from 'axios';
 import { BACKEND_LINK } from "./Const";
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
+import {faRightFromBracket, faUser} from '@fortawesome/free-solid-svg-icons'
 
 function Navdropdown() {
     const [click, setClick] = useState(false);
@@ -45,10 +47,13 @@ function Navdropdown() {
                     {loading ? (
                         <p>Loading...</p>
                     ) : (
+                        <div>
+                        {/* <FontAwesomeIcon icon={faUser} /> */}
                         <p>{name}</p>
+                        </div>
                     )}
                 </div>
-                <li>
+                <li id='logoutBtn'>
                     <Link
                         to={"/"}
                         onClick={() => {
@@ -57,7 +62,9 @@ function Navdropdown() {
                         }}
                         style={{ textDecoration: 'none' , color: 'white' }}
                     >
-                        Logout
+                        {/* <FontAwesomeIcon icon={faRightFromBracket} /> */}
+                        Logout 
+                        <FontAwesomeIcon icon={faRightFromBracket} />
                     </Link>
                 </li>
             </ul>
