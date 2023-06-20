@@ -68,6 +68,7 @@ class Book(BaseModel):
 class EditBookRequest(BaseModel):
     title: str
     author: str
+    image: str
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
@@ -295,10 +296,10 @@ def remove_borrow(book_id: int, uid: str):
     )
     conn.commit()
 
-def edit_book(book_id: int, title: str, author:str):
+def edit_book(book_id: int, title: str, author:str, link:str):
     cursor.execute(
-        "UPDATE Book SET title = %s, author = %s WHERE bookID = %s",
-        (title, author, book_id)
+        "UPDATE Book SET title = %s, author = %s, image = %s WHERE bookID = %s",
+        (title, author, link, book_id)
     )
     conn.commit()
 
@@ -526,7 +527,7 @@ async def borrow_book_status_handler(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="You are not authorized to access this resource",
             )
-        edit_book(book_id, request_body.title, request_body.author)
+        edit_book(book_id, request_body.title, request_body.author, request_body.image)
     except (JWTError, ValidationError):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

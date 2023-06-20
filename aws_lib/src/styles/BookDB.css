@@ -8,6 +8,7 @@
     width: 100px;
     font-family: 'Geologica', sans-serif;
     color: white;
+    cursor: pointer;
 }
 
 #editBtn{
@@ -37,7 +38,6 @@
     font-weight: bold;
     padding: 4px;
     transition: border-bottom-color 0.3s ease;
-    border-bottom-width: calc(2px + (0.15rem * ((100% - 2ch) / 2)));
 }
 
 .Contents input[type="text"] {
@@ -49,7 +49,6 @@
     color: black; 
     padding: 4px;
     transition: border-bottom-color 0.3s ease;
-    border-bottom-width: calc(2px + (0.15rem * ((100% - 2ch) / 2)));
 }
   
 .Contents input[type="title"]:focus {

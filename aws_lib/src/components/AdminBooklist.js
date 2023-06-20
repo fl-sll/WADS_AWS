@@ -50,6 +50,7 @@ function AdminBooklist({ word }) {
     const data = {
       author: bookToUpdate.author,
       title: bookToUpdate.title,
+      image: bookToUpdate.image,
     }
 
     axios
@@ -123,10 +124,7 @@ function AdminBooklist({ word }) {
                         setBookData((prevBookData) =>
                           prevBookData.map((b) =>
                             b.id === book.id ? { ...b, title: e.target.value } : b
-                          )
-                        )
-                      }
-                    />
+                          ))}/>
                   </h2>
                   <p>
                     <input
@@ -136,10 +134,17 @@ function AdminBooklist({ word }) {
                         setBookData((prevBookData) =>
                           prevBookData.map((b) =>
                             b.id === book.id ? { ...b, author: e.target.value } : b
-                          )
-                        )
-                      }
-                    />
+                          ))}/>
+                  </p>
+                  <p>
+                    <input
+                      type="text"
+                      value={book.image}
+                      onChange={(e) =>
+                        setBookData((prevBookData) =>
+                          prevBookData.map((b) =>
+                            b.id === book.id ? { ...b, image: e.target.value } : b
+                          ))}/>
                   </p>
                 </>
               ) : (
