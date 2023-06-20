@@ -11,11 +11,13 @@ import { BACKEND_LINK } from "./Const";
 function Login(){
     const[email, setEmail] = useState("");
     const[password, setPassword] = useState("");
-    // const [valid, setValid] = useState(0);
     const navigate = useNavigate();
+    const [error, setError] = useState("");
+    const [showError, setShowError] = useState(false);
 
     const handleSubmit = (e) => {
         e.preventDefault();
+        setError("");
 
         const data ={
           username: email,
@@ -34,8 +36,15 @@ function Login(){
                 window.localStorage.setItem("access_token", response.data.access_token)
                 navigate("/dashboard")
             })
-            .catch(function(error) {
-              console.log(error);
+            .catch((error) => {
+                if (error.response && error.response.status === 401) {
+                    setError("Invalid email or password. Please try again.");
+                    setShowError(true);
+                } 
+                else {
+                    setError("An error occurred. Please try again.");
+                    setShowError(true);
+                }
             })
     }
 
@@ -56,11 +65,13 @@ function Login(){
                     {/* <Link to="/bookpage" style={{ textDecoration: 'none' , color:"black"}}>Login</Link> */}
                     Login
                 </button>
+                <div className={`errorContainer ${showError ? 'show' : ''}`}>
+                    {error && <p className="error">{error}</p>}
+                </div>
             </form>
-            {/* <button className="adminBtn"> */}
                 <Link to="/adminLogin" className="adminBtnText" style={{ textDecoration: 'none' }}>
-                    <button className="adminBtn">Login As Admin</button></Link>
-            {/* </button> */}
+                    <button className="adminBtn">Login As Admin</button>
+                </Link>
         </div>
     )
 }

@@ -1,4 +1,4 @@
-.login{
+.login {
     height: 100vh;
     width: 100vw;
     display: flex;
@@ -8,9 +8,9 @@
     background-image: url(../assets/backgroundLogin.png);
     background-size: cover;
     flex-direction: column;
-}
-
-.loginContainer{
+  }
+  
+  .loginContainer {
     background-color: white;
     height: 45%;
     width: 40%;
@@ -21,41 +21,49 @@
     align-items: center;
     border-radius: 20px;
     padding: 10px;
-}
-
-.logo{
+  }
+  
+  .logo {
     padding: 2%;
     max-width: 600px;
-}
-
-.login_textBox{
+    padding-bottom: 20px;
+    padding-top: 20px;
+  }
+  
+  .admlogo {
+    padding: 2%;
+    max-width: 600px;
+    height: 69px;
+  }
+  
+  .login_textBox {
     padding: 10px;
     font-size: 16px;
     margin-bottom: 10px;
     border: none;
     border-radius: 45px;
     width: 250px;
-    background-color: #EFEFEF;
-}
-
-.login_btn{
+    background-color: #efefef;
+  }
+  
+  .login_btn {
     padding: 10px;
     font-size: 16px;
     color: white;
-    background: #8CD3FC;
+    background: #8cd3fc;
     border: none;
     width: 300px;
     margin: 5px 5px;
     margin-bottom: 10px;
     border-radius: 45px;
-}
-
-.login_btn:hover{
+  }
+  
+  .login_btn:hover {
     cursor: pointer;
-    background-color: #F8B21A;
-}
-
-.register_btn{
+    background-color: #f8b21a;
+  }
+  
+  .register_btn {
     padding: 10px;
     font-size: 16px;
     background: rgb(219, 219, 219);
@@ -64,24 +72,23 @@
     margin: 5px 5px;
     margin-bottom: 10px;
     border-radius: 45px;
-}
-
-.symbol{
-    /* background-color: #EFEFEF; */
+  }
+  
+  .symbol {
     width: 20px;
     height: 20px;
     padding: 1%;
     margin: 2%;
-    border-radius: 45px;
-}
-
-.formContainer{
+    border-radius: 50%;
+  }
+  
+  .formContainer {
     display: flex;
     flex-direction: row;
     align-items: center;
-}
-
-.adminBtn{
+  }
+  
+  .adminBtn {
     background-color: white;
     width: 400px;
     height: 150%;
@@ -90,17 +97,81 @@
     margin: 1%;
     font-size: 16px;
     color: black;
-}
-
-.adminBtn:hover{
+  }
+  
+  .adminBtn:hover {
     cursor: pointer;
-    background-color: #F8B21A;
-}
-
-.adminBtnText{
+    background-color: #f8b21a;
+  }
+  
+  .adminBtnText {
     color: black;
-}
-
-.loginDesc{
-    color: #8CD3FC;
-}
+  }
+  
+  .loginDesc {
+    color: #8cd3fc;
+  }
+  
+  .errorContainer {
+    position: relative;
+    text-align: center;
+  }
+  
+  .error {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 5px 10px;
+    background-color: #ff4f4f;
+    color: white;
+    border-radius: 5px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+    animation: fadeOut 3s forwards;
+    white-space: nowrap;
+  }
+  
+  .errorContainer.show .error {
+    opacity: 1;
+    visibility: visible;
+  }
+  
+  .error::before {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 5px;
+    border-style: solid;
+    border-color: transparent transparent #ff4f4f transparent;
+  }
+  
+  .error.animation {
+    animation: errorAnimation 0.5s ease-in-out forwards;
+  }
+  
+  @keyframes errorAnimation {
+    0% {
+      transform: translateX(-50%) translateY(20px) scale(0.7);
+    }
+    50% {
+      transform: translateX(-50%) translateY(10px) scale(1.05);
+    }
+    100% {
+      transform: translateX(-50%) translateY(0) scale(1);
+    }
+  }
+  
+  @keyframes fadeOut {
+    0% {
+      opacity: 1;
+    }
+    100% {
+      opacity: 0;
+      visibility: hidden;
+    }
+  }
+  
+  

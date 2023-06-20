@@ -337,7 +337,7 @@ def authenticate_user(username: str, password: str):
         if username == admin[i][2] and verify_password(password, admin[i][3]):
             is_admin = admin[i] + (1,)
             return username, is_admin[5]
-    return False
+    return False, "Incorrect username or password"
 
 # return logged in user fullname
 def get_user_full_name(username: str):
