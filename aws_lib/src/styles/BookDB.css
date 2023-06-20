@@ -11,6 +11,7 @@
 }
 
 #editBtn{
+    margin-top:15px;
     background-color: #ffae00;
 }
 
@@ -24,4 +25,34 @@
 
 #delBtn:hover{
     background-color: #ea6967;
+}
+
+.Contents input[type="title"] {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    border-bottom: 2px solid black;
+    font-size: 24px;
+    color: black;
+    font-weight: bold;
+    padding: 4px;
+    transition: border-bottom-color 0.3s ease;
+    border-bottom-width: calc(2px + (0.15rem * ((100% - 2ch) / 2)));
+}
+
+.Contents input[type="text"] {
+    border: none;
+    background-color: transparent;
+    outline: none;
+    border-bottom: 2px solid black;
+    font-size: 18px;
+    color: black; 
+    padding: 4px;
+    transition: border-bottom-color 0.3s ease;
+    border-bottom-width: calc(2px + (0.15rem * ((100% - 2ch) / 2)));
+}
+  
+.Contents input[type="title"]:focus {
+    border-bottom-color: #161616;
+    color: #161616;
 }

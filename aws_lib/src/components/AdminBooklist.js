@@ -4,21 +4,57 @@ import {FontAwesomeIcon} from '@fortawesome/react-fontawesome'
 import {faCircleCheck,faCircleXmark } from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 import { BACKEND_LINK } from "./Const";
+import { useNavigate } from "react-router-dom";
 
 
 function AdminBooklist({ word }) {
   const [bookData, setBookData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
+  const navigate = useNavigate();
 
-  const toggleImage = async (bookId, currentStatus) => {
-    const updatedStatus = currentStatus === "available" ? "unavailable" : "available";
+  const handleEditClick = (bookId) => {
+    setBookData((prevBookData) =>
+      prevBookData.map((book) =>
+        book.id === bookId ? { ...book, isEditing: true } : book
+      )
+    );
+  };
+
+  const handleDeleteClick = (bookId) => {
     const token = window.localStorage.getItem("access_token");
 
     axios
+      .delete(`${BACKEND_LINK}/deleteBook/${bookId}`, {
+        headers: {
+          Accept: "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      })
+      .then(() => {
+        setBookData((prevBookData) =>
+          prevBookData.filter((book) => book.id !== bookId)
+        );
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      .finally(() => {
+        setRefreshData((prevValue) => !prevValue);
+      });
+  };
+
+  const handleSaveClick = (bookId) => {
+    const bookToUpdate = bookData.find((book) => book.id === bookId);
+    const token = window.localStorage.getItem("access_token");
+
+    const data = {
+      author: bookToUpdate.author,
+      title: bookToUpdate.title,
+    }
+
+    axios
       .put(
-        `${BACKEND_LINK}/books/${bookId}`,
-        { status: updatedStatus },
-        {
+        `${BACKEND_LINK}/editBook/${bookId}`, data, {
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
@@ -26,10 +62,9 @@ function AdminBooklist({ word }) {
         }
       )
       .then(() => {
-        console.log(word)
         setBookData((prevBookData) =>
           prevBookData.map((book) =>
-            book.id === bookId ? { ...book, status: updatedStatus } : book
+            book.id === bookId ? { ...book, isEditing: false } : book
           )
         );
       })
@@ -37,12 +72,11 @@ function AdminBooklist({ word }) {
         console.log(error);
       })
       .finally(() => {
-        setRefreshData(prevValue => !prevValue);
+        setRefreshData((prevValue) => !prevValue);
       });
   };
 
   useEffect(() => {
-    const token = window.localStorage.getItem("access_token");
     axios
       .get(BACKEND_LINK + "/books", {
         headers: {
@@ -54,16 +88,21 @@ function AdminBooklist({ word }) {
         },
       })
       .then((response) => {
-        const book = response.data;
-        console.log(book)
-        console.log(word)
+        const book = response.data.map((book) => ({
+          ...book,
+          isEditing: false
+        }));
         setBookData(book);
       })
       .catch((error) => {
-        console.log(error);
+        if (error.response && error.response.status === 403) {
+          navigate("/error")
+        } else {
+          console.log(error)
+        }
       })
 
-  }, [refreshData, word]);
+  }, [refreshData, word, navigate]);
 
   return (
     <div>
@@ -74,8 +113,41 @@ function AdminBooklist({ word }) {
               <img src={`${book.image}`} alt={book.title} className="bookimg"/>
             </div>
             <div className="Contents">
-              <h2>{book.title}</h2>
-              <p>{book.author}</p>
+              {book.isEditing ? (
+                <>
+                  <h2>
+                    <input
+                      type="title"
+                      value={book.title}
+                      onChange={(e) =>
+                        setBookData((prevBookData) =>
+                          prevBookData.map((b) =>
+                            b.id === book.id ? { ...b, title: e.target.value } : b
+                          )
+                        )
+                      }
+                    />
+                  </h2>
+                  <p>
+                    <input
+                      type="text"
+                      value={book.author}
+                      onChange={(e) =>
+                        setBookData((prevBookData) =>
+                          prevBookData.map((b) =>
+                            b.id === book.id ? { ...b, author: e.target.value } : b
+                          )
+                        )
+                      }
+                    />
+                  </p>
+                </>
+              ) : (
+                <>
+                  <h2>{book.title}</h2>
+                  <p>{book.author}</p>
+                </>
+              )}
             </div>
           </div>
           <div className="right">
@@ -88,10 +160,16 @@ function AdminBooklist({ word }) {
               />
             </div>
             <div>
-              <button className="databaseBtn" id="editBtn">
-                Edit
-              </button>
-              <button className="databaseBtn" id="delBtn">
+              {book.isEditing ? (
+                  <button className="databaseBtn" id="editBtn" onClick={() => handleSaveClick(book.id)}>
+                    Save
+                  </button>
+                ) : (
+                  <button className="databaseBtn" id="editBtn" onClick={() => handleEditClick(book.id)}>
+                    Edit
+                  </button>
+                )}
+              <button className="databaseBtn" id="delBtn" onClick={() => handleDeleteClick(book.id)}>
                 Delete
               </button>
             </div>

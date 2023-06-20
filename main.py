@@ -65,6 +65,10 @@ class Book(BaseModel):
     author: str
     link: str
 
+class EditBookRequest(BaseModel):
+    title: str
+    author: str
+
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 app = FastAPI()
@@ -291,6 +295,26 @@ def remove_borrow(book_id: int, uid: str):
     )
     conn.commit()
 
+def edit_book(book_id: int, title: str, author:str):
+    cursor.execute(
+        "UPDATE Book SET title = %s, author = %s WHERE bookID = %s",
+        (title, author, book_id)
+    )
+    conn.commit()
+
+def delete_book(book_id: int):
+    cursor.execute(
+        "DELETE FROM Borrow WHERE bookID = %s",
+        (book_id,)
+    )
+    conn.commit()
+    print()
+    cursor.execute(
+        "DELETE FROM Book WHERE bookID = %s",
+        (book_id,)
+    )
+    conn.commit()
+
 # check the user
 # def authenticate_user(username: str, password: str):
 #     cursor.execute("select * from User")
@@ -487,6 +511,34 @@ async def borrow_book_status_handler(
     add_borrow_list(book_id, user)
     update_book_status(book_id, request_body.status)
     return {"message": "Book status updated successfully"}
+
+@app.put("/editBook/{book_id}")
+async def borrow_book_status_handler(
+    book_id: int,
+    request_body: EditBookRequest,
+    token: str = Depends(oauth2_scheme)
+):
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        is_admin: bool = payload.get("is_admin")
+        if not is_admin:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You are not authorized to access this resource",
+            )
+        edit_book(book_id, request_body.title, request_body.author)
+    except (JWTError, ValidationError):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid token",
+        )
+
+@app.delete("/deleteBook/{book_id}")
+async def delete_book_handler(
+    book_id: int
+):
+    delete_book(book_id)
+    return{"Success": "Book has been deleted successfully"}
 
 @app.put("/cancelBook/{book_id}")
 async def cancel_book_status_handler(

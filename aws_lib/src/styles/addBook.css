@@ -73,6 +73,17 @@ h1{
     animation-timing-function: ease-in-out;
   }
 
+  .confirm p{
+    animation-name: fade;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+  }
+
+  .warning p{
+    animation-name: fade;
+    animation-duration: 1s;
+    animation-timing-function: ease-in-out;
+  }
 
   @keyframes fade {
     0% {
@@ -99,14 +110,12 @@ h1{
     cursor: pointer;
   }
 
-.warning
-{
+.warning{
     color: red;
     display: flex;
     justify-content: center;
 }
-.confirm
-{
+.confirm{
     color: lime;
     display: flex;
     justify-content: center;
